@@ -1,1 +1,635 @@
+<!doctype html>
+<html lang="hr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Online Knjižnica – Admin</title>
+  <style>
+    :root{
+      --bg:#020617;
+      --bg2:#02081f;
+      --card:#02081f;
+      --accent:#22c55e;
+      --accent-soft:rgba(34,197,94,0.15);
+      --danger:#ef4444;
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --border:#1f2937;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:radial-gradient(circle at top,#0b1120 0,#020617 55%,#000 100%);
+      color:var(--text);
+    }
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:10px 14px;
+      border-radius:14px;
+      background:linear-gradient(135deg,#020617,#02081f);
+      border:1px solid var(--border);
+      box-shadow:0 18px 45px rgba(0,0,0,0.7);
+      position:sticky;
+      top:0;
+      z-index:10;
+    }
+    .logo-title{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .logo-title h1{
+      margin:0;
+      font-size:18px;
+      letter-spacing:0.04em;
+      text-transform:uppercase;
+    }
+    .logo-title span{
+      font-size:11px;
+      color:var(--muted);
+    }
+    .user-box{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+      gap:8px;
+    }
+    .pill{
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:11px;
+      background:rgba(15,23,42,0.9);
+      border:1px solid var(--border);
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .pill strong{color:var(--text);}
+    button{
+      border:none;
+      cursor:pointer;
+      font:inherit;
+    }
+    .btn{
+      padding:6px 12px;
+      border-radius:999px;
+      background:var(--accent);
+      color:#022c22;
+      font-size:12px;
+      font-weight:600;
+      box-shadow:0 0 0 1px rgba(34,197,94,0.4),0 10px 25px rgba(34,197,94,0.25);
+      transition:transform .08s ease,box-shadow .08s ease,background .08s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 14px 30px rgba(34,197,94,0.35);
+      background:#4ade80;
+    }
+    .btn:active{
+      transform:translateY(0);
+      box-shadow:0 8px 20px rgba(34,197,94,0.2);
+    }
+    .btn-ghost{
+      padding:5px 11px;
+      border-radius:999px;
+      background:transparent;
+      border:1px solid var(--border);
+      color:var(--muted);
+      font-size:11px;
+    }
+    .btn-ghost:hover{
+      border-color:var(--accent);
+      color:var(--accent);
+      background:rgba(15,23,42,0.8);
+    }
+    .btn-small{
+      padding:4px 8px;
+      font-size:11px;
+      border-radius:999px;
+    }
+    .btn-danger{
+      background:var(--danger);
+      color:#fee2e2;
+      box-shadow:0 0 0 1px rgba(248,113,113,0.5),0 10px 25px rgba(248,113,113,0.3);
+    }
+    .btn-danger:hover{
+      background:#f97373;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:320px minmax(0,1fr);
+      gap:14px;
+      margin-top:6px;
+    }
+    @media(max-width:900px){
+      .layout{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .card{
+      background:radial-gradient(circle at top,#02081f 0,#020617 55%,#020617 100%);
+      border-radius:14px;
+      border:1px solid var(--border);
+      padding:14px;
+      box-shadow:0 18px 40px rgba(0,0,0,0.75);
+    }
+    .card h2{
+      margin:0 0 8px;
+      font-size:15px;
+    }
+    .card h3{
+      margin:0 0 6px;
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+      margin-bottom:8px;
+      font-size:12px;
+    }
+    .field label{
+      color:var(--muted);
+    }
+    .field input,
+    .field select{
+      padding:6px 8px;
+      border-radius:8px;
+      border:1px solid #111827;
+      background:rgba(15,23,42,0.9);
+      color:var(--text);
+      font-size:13px;
+    }
+    .field input:focus,
+    .field select:focus{
+      outline:none;
+      border-color:var(--accent);
+      box-shadow:0 0 0 1px var(--accent-soft);
+    }
+    .field small{
+      font-size:10px;
+      color:var(--muted);
+    }
+
+    .row-actions{
+      display:flex;
+      gap:6px;
+      margin-top:6px;
+    }
+
+    .status{
+      font-size:11px;
+      color:var(--muted);
+      min-height:14px;
+      margin-top:4px;
+    }
+    .status.error{
+      color:var(--danger);
+    }
+    .status.ok{
+      color:var(--accent);
+    }
+
+    .books-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      margin-bottom:8px;
+    }
+    .books-header span{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .books-list{
+      border-radius:10px;
+      border:1px solid #111827;
+      background:rgba(15,23,42,0.85);
+      max-height:520px;
+      overflow:auto;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:12px;
+    }
+    th,td{
+      padding:6px 8px;
+      border-bottom:1px solid #111827;
+      text-align:left;
+    }
+    th{
+      position:sticky;
+      top:0;
+      background:#020617;
+      z-index:1;
+      font-weight:500;
+      color:var(--muted);
+    }
+    tr:nth-child(even) td{
+      background:rgba(15,23,42,0.7);
+    }
+    tr:hover td{
+      background:rgba(22,163,74,0.08);
+    }
+    .col-id{width:42px;}
+    .col-grade{width:55px;}
+    .col-price{width:80px;}
+    .col-actions{width:120px; text-align:right;}
+    .col-pdf{font-size:11px;color:var(--muted);}
+
+    .badge-free{
+      padding:2px 6px;
+      border-radius:999px;
+      background:var(--accent-soft);
+      color:var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo-title">
+        <h1>Online Knjižnica – Admin</h1>
+        <span>Upravljanje knjigama (samo administratori)</span>
+      </div>
+      <div class="user-box" id="userBox">
+        <!-- puni JS -->
+      </div>
+    </header>
+
+    <main>
+      <div class="layout">
+        <!-- Lijevo: forma za knjigu -->
+        <section class="card">
+          <h2>Knjiga</h2>
+          <h3 id="formTitle">Dodaj novu knjigu</h3>
+
+          <div class="field">
+            <label for="bookId">ID (čitanje / edit)</label>
+            <input id="bookId" type="number" readonly placeholder="(auto)">
+            <small>Ovo polje se puni automatski kada uređuješ knjigu.</small>
+          </div>
+
+          <div class="field">
+            <label for="bookName">Naslov knjige *</label>
+            <input id="bookName" type="text" placeholder="npr. Matematika 5" required>
+          </div>
+
+          <div class="field">
+            <label for="bookGrade">Razred *</label>
+            <select id="bookGrade">
+              <option value="">-- Odaberi --</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="1s">1. srednja</option>
+              <option value="2s">2. srednja</option>
+              <option value="3s">3. srednja</option>
+              <option value="4s">4. srednja</option>
+              <option value="ostalo">Ostalo</option>
+            </select>
+            <small>Ovo se poklapa s onim što šaljemo u /api/books/:grade.</small>
+          </div>
+
+          <div class="field">
+            <label for="bookPrice">Cijena (silver) *</label>
+            <input id="bookPrice" type="number" min="0" step="1" value="0">
+            <small>0 = besplatno. U bazi je to "price_silver".</small>
+          </div>
+
+          <div class="field">
+            <label for="bookPdf">PDF putanja *</label>
+            <input id="bookPdf" type="text" placeholder="/pdf/1/matematika1.pdf">
+            <small>Relativno na <code>/public</code>, npr. <code>/pdf/1/matematika1.pdf</code>.</small>
+          </div>
+
+          <div class="row-actions">
+            <button class="btn" id="btnSave">Spremi</button>
+            <button class="btn-ghost btn-small" id="btnNew">Nova knjiga</button>
+          </div>
+
+          <div class="status" id="formStatus"></div>
+        </section>
+
+        <!-- Desno: lista svih knjiga -->
+        <section class="card">
+          <div class="books-header">
+            <div>
+              <h2>Popis knjiga</h2>
+              <span id="listSubtitle">Učitavam...</span>
+            </div>
+            <button class="btn-ghost" id="btnReload">Osvježi popis</button>
+          </div>
+
+          <div class="books-list" id="booksList">
+            <!-- tablica ide ovdje -->
+          </div>
+
+          <div class="status" id="listStatus"></div>
+        </section>
+      </div>
+
+      <section class="card" id="notAdminCard" style="display:none;">
+        <h2>Pristup odbijen</h2>
+        <p style="font-size:13px;color:var(--muted);margin-top:4px;">
+          Ova stranica je samo za administratore. Prijavi se s admin računom ili se vrati na glavnu stranicu.
+        </p>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+          <a href="/" class="btn-ghost" style="text-decoration:none;">← Nazad na index</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const state = {
+      user: null,
+      books: []
+    };
+
+    function renderUserBox(){
+      const box = document.getElementById("userBox");
+      if(!state.user){
+        box.innerHTML = `
+          <div class="pill">
+            <span>Nisi prijavljen/a</span>
+          </div>
+          <a href="/" class="btn-ghost" style="text-decoration:none;">← Nazad</a>
+        `;
+        return;
+      }
+      box.innerHTML = `
+        <div class="pill">
+          <span>Admin:</span>
+          <strong>${state.user.email}</strong>
+        </div>
+        <button class="btn-ghost" id="btnLogout">Odjava</button>
+        <a href="/" class="btn-ghost" style="text-decoration:none;">← Index</a>
+      `;
+      document.getElementById("btnLogout").onclick = async () => {
+        try{ await fetch("/api/logout"); }catch{}
+        location.href = "/";
+      };
+    }
+
+    function setFormStatus(msg, type=""){
+      const el = document.getElementById("formStatus");
+      el.textContent = msg || "";
+      el.classList.remove("error","ok");
+      if(type) el.classList.add(type);
+    }
+
+    function setListStatus(msg, type=""){
+      const el = document.getElementById("listStatus");
+      el.textContent = msg || "";
+      el.classList.remove("error","ok");
+      if(type) el.classList.add(type);
+    }
+
+    function clearForm(){
+      document.getElementById("bookId").value = "";
+      document.getElementById("bookName").value = "";
+      document.getElementById("bookGrade").value = "";
+      document.getElementById("bookPrice").value = "0";
+      document.getElementById("bookPdf").value = "";
+      document.getElementById("formTitle").textContent = "Dodaj novu knjigu";
+      setFormStatus("");
+    }
+
+    function fillFormFromBook(b){
+      document.getElementById("bookId").value = b.id || "";
+      document.getElementById("bookName").value = b.name || "";
+      document.getElementById("bookGrade").value = b.grade || "";
+      document.getElementById("bookPrice").value = b.price_silver|0;
+      document.getElementById("bookPdf").value = b.pdf_path || "";
+      document.getElementById("formTitle").textContent = "Uredi knjigu #" + b.id;
+      setFormStatus("");
+    }
+
+    function formatPrice(s){
+      s = s|0;
+      if(s<=0) return '<span class="badge-free">Besplatno</span>';
+      const g = Math.floor(s/100);
+      const c = s%100;
+      if(c===0) return g + " G";
+      return g + " G " + c + " S";
+    }
+
+    function renderBooksTable(){
+      const box = document.getElementById("booksList");
+      const books = state.books || [];
+      document.getElementById("listSubtitle").textContent =
+        "Ukupno knjiga: " + books.length;
+
+      if(books.length===0){
+        box.innerHTML = `
+          <div style="padding:14px;font-size:13px;color:var(--muted);text-align:center;">
+            Nema knjiga u bazi. Dodaj prvu knjigu na lijevoj strani.
+          </div>`;
+        return;
+      }
+
+      const rows = books.map(b => `
+        <tr data-id="${b.id}">
+          <td class="col-id">${b.id}</td>
+          <td>${b.name}</td>
+          <td class="col-grade">${b.grade}</td>
+          <td class="col-price">${formatPrice(b.price_silver)}</td>
+          <td class="col-pdf">${b.pdf_path}</td>
+          <td class="col-actions" style="text-align:right;">
+            <button class="btn-ghost btn-small" data-act="edit">Uredi</button>
+            <button class="btn-danger btn-small" data-act="del">Obriši</button>
+          </td>
+        </tr>
+      `).join("");
+
+      box.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th class="col-id">ID</th>
+              <th>Naslov</th>
+              <th class="col-grade">Raz.</th>
+              <th class="col-price">Cijena</th>
+              <th>PDF putanja</th>
+              <th class="col-actions">Akcije</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+
+      box.querySelector("tbody").addEventListener("click", (e)=>{
+        const btn = e.target.closest("[data-act]");
+        if(!btn) return;
+        const tr = btn.closest("tr");
+        const id = parseInt(tr.dataset.id,10);
+        const book = state.books.find(b=>b.id===id);
+        if(!book) return;
+
+        if(btn.dataset.act==="edit"){
+          fillFormFromBook(book);
+          window.scrollTo({ top:0, behavior:"smooth" });
+        }else if(btn.dataset.act==="del"){
+          if(confirm("Sigurno želiš obrisati knjigu #" + id + " ?")){
+            deleteBook(id);
+          }
+        }
+      });
+    }
+
+    async function fetchBooks(){
+      setListStatus("Učitavam knjige...");
+      try{
+        const res = await fetch("/api/admin/books");
+        const data = await res.json();
+        if(!res.ok || !data.ok){
+          setListStatus(data.error || "Greška pri učitavanju.", "error");
+          document.getElementById("booksList").innerHTML = "";
+          return;
+        }
+        state.books = data.books || [];
+        renderBooksTable();
+        setListStatus("Popis učitan.", "ok");
+      }catch(e){
+        setListStatus("Greška pri učitavanju.", "error");
+        document.getElementById("booksList").innerHTML = "";
+      }
+    }
+
+    async function saveBook(){
+      const id   = document.getElementById("bookId").value.trim();
+      const name = document.getElementById("bookName").value.trim();
+      const grade = document.getElementById("bookGrade").value.trim();
+      const price = document.getElementById("bookPrice").value.trim();
+      const pdf  = document.getElementById("bookPdf").value.trim();
+
+      if(!name || !grade || !pdf){
+        setFormStatus("Popuni sva obavezna polja (*).", "error");
+        return;
+      }
+
+      setFormStatus("Spremam...", "");
+      try{
+        const payload = { name, grade, price_silver: Number(price)||0, pdf_path: pdf };
+        if(id) payload.id = Number(id);
+
+        const res = await fetch("/api/admin/books/save",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if(!res.ok || !data.ok){
+          setFormStatus(data.error || "Greška pri spremanju.", "error");
+          return;
+        }
+        setFormStatus("Spremljeno.", "ok");
+        await fetchBooks();
+        // ako je bila nova knjiga, ostavi formu praznu
+        if(!id) clearForm();
+      }catch(e){
+        setFormStatus("Greška pri spremanju.", "error");
+      }
+    }
+
+    async function deleteBook(id){
+      setListStatus("Brišem knjigu #" + id + "...","");
+      try{
+        const res = await fetch("/api/admin/books/delete",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({ id })
+        });
+        const data = await res.json();
+        if(!res.ok || !data.ok){
+          setListStatus(data.error || "Brisanje nije uspjelo.", "error");
+          return;
+        }
+        setListStatus("Knjiga obrisana.", "ok");
+        await fetchBooks();
+      }catch(e){
+        setListStatus("Greška pri brisanju.", "error");
+      }
+    }
+
+    async function fetchMe(){
+      try{
+        const res = await fetch("/api/me");
+        const data = await res.json();
+        if(!res.ok || !data.ok){
+          state.user = null;
+          return;
+        }
+        state.user = data.user;
+      }catch{
+        state.user = null;
+      }
+    }
+
+    // BTN events
+    document.getElementById("btnSave").addEventListener("click",(e)=>{
+      e.preventDefault();
+      saveBook();
+    });
+
+    document.getElementById("btnNew").addEventListener("click",(e)=>{
+      e.preventDefault();
+      clearForm();
+    });
+
+    document.getElementById("btnReload").addEventListener("click",(e)=>{
+      e.preventDefault();
+      fetchBooks();
+    });
+
+    // INIT
+    (async function init(){
+      await fetchMe();
+      renderUserBox();
+
+      const notAdminCard = document.getElementById("notAdminCard");
+      const layout = document.querySelector(".layout");
+
+      if(!state.user || !state.user.is_admin){
+        layout.style.display = "none";
+        notAdminCard.style.display = "block";
+        return;
+      }
+
+      layout.style.display = "grid";
+      notAdminCard.style.display = "none";
+
+      fetchBooks();
+    })();
+  </script>
+</body>
+</html>
 
