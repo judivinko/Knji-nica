@@ -475,6 +475,52 @@ app.post("/api/admin/books/delete", (req, res) => {
   }
 });
 
+// ----------------- ADMIN: DODAJ SILVER KORISNIKU -----------------
+app.post("/api/admin/grant-silver", (req, res) => {
+  try {
+    if (!isAdmin(req)) {
+      return res.status(401).json({ ok:false, error:"Unauthorized" });
+    }
+
+    const { email, amount } = req.body || {};
+    const rawEmail = String(email || "").trim().toLowerCase();
+    const delta = Number(amount);
+
+    if (!rawEmail || !Number.isFinite(delta) || delta === 0) {
+      return res.status(400).json({ ok:false, error:"Bad email or amount" });
+    }
+
+    const u = db.prepare("SELECT id, balance_silver FROM users WHERE lower(email)=lower(?)")
+                .get(rawEmail);
+
+    if (!u) return res.status(404).json({ ok:false, error:"User not found" });
+
+    const newBal = Math.max(0, u.balance_silver + Math.floor(delta));
+
+    const tx = db.transaction(() => {
+      db.prepare("UPDATE users SET balance_silver=? WHERE id=?").run(newBal, u.id);
+      db.prepare(`
+        INSERT INTO gold_ledger(user_id, delta_s, reason, ref, created_at)
+        VALUES (?,?,?,?,?)
+      `).run(
+        u.id,
+        Math.floor(delta),
+        "ADMIN_GRANT",
+        "manual",
+        nowISO()
+      );
+    });
+
+    tx();
+
+    return res.json({ ok:true, balance_silver: newBal });
+  } catch (e) {
+    console.error("[/api/admin/grant-silver] error:", e);
+    return res.status(500).json({ ok:false, error:String(e.message || e) });
+  }
+});
+
+
 // ----------------- PAYPAL CONFIRM (KNJIŽNICA VERZIJA — BEZ BONUS CODE) -----------------
 app.post("/api/paypal/confirm", async (req, res) => {
   try{
