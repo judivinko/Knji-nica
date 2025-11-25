@@ -233,10 +233,12 @@ ensure(`
 ensure(`
   CREATE TABLE IF NOT EXISTS books(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    grade TEXT NOT NULL,
-    name TEXT NOT NULL,
-    pdf_path TEXT NOT NULL,
-    price_silver INTEGER NOT NULL DEFAULT 0
+    grade TEXT NOT NULL,           -- npr. "1", "2", "1s", "ostalo"
+    name TEXT NOT NULL,            -- naslov knjige
+    author TEXT DEFAULT '',        -- pisac
+    cover_image TEXT DEFAULT '',   -- URL slike knjige (unutar /images/ ili sl.)
+    pdf_path TEXT NOT NULL,        -- /pdf/... putanja
+    price_silver INTEGER NOT NULL DEFAULT 0  -- cijena u silveru (0 = besplatno)
   );
 `);
 
@@ -275,25 +277,10 @@ ensure(`
   );
 `);
 
-/* ----------------- SEED KNJIGA ----------------- */
+// --- MIGRACIJE za stare baze (ako books već postoji bez ovih kolona) ---
+try { db.exec("ALTER TABLE books ADD COLUMN author TEXT DEFAULT ''"); } catch (e) {}
+try { db.exec("ALTER TABLE books ADD COLUMN cover_image TEXT DEFAULT ''"); } catch (e) {}
 
-// Dodaj knjigu ako ne postoji
-function ensureBook(name, grade, price_silver, pdf_path) {
-  const row = db.prepare("SELECT id FROM books WHERE name=? AND grade=?")
-                .get(name, grade);
-
-  if (row) {
-    db.prepare("UPDATE books SET price_silver=?, pdf_path=? WHERE id=?")
-      .run(price_silver, pdf_path, row.id);
-    return row.id;
-  }
-
-  db.prepare("INSERT INTO books(name, grade, price_silver, pdf_path) VALUES (?,?,?,?)")
-    .run(name, grade, price_silver, pdf_path);
-
-  return db.prepare("SELECT id FROM books WHERE name=? AND grade=?")
-    .get(name, grade).id;
-}
 
 /* ---------- DODAJ PRIMJER KNJIGA ---------- */
 
@@ -404,12 +391,71 @@ app.get("/api/logout", (req, res) => {
 
 // ----------------- ADMIN: BOOK MANAGEMENT -----------------
 
+// ----------------- ADMIN: DODAJ GOLD KORISNIKU -----------------
+app.post("/api/admin/add-gold", (req, res) => {
+  if (!isAdmin(req)) return res.status(401).json({ ok:false, error:"Unauthorized" });
+
+  const { email, gold } = req.body || {};
+  const rawEmail = String(email || "").trim().toLowerCase();
+  const g = Number(gold);
+
+  if (!isEmail(rawEmail)) {
+    return res.status(400).json({ ok:false, error:"Bad email" });
+  }
+  if (!Number.isFinite(g) || g <= 0) {
+    return res.status(400).json({ ok:false, error:"Bad amount" });
+  }
+
+  const addSilver = Math.round(g * 100); // 1 gold = 100 silver
+
+  const u = db.prepare(`
+    SELECT id, balance_silver
+    FROM users
+    WHERE lower(email)=lower(?)
+  `).get(rawEmail);
+
+  if (!u) {
+    return res.status(404).json({ ok:false, error:"User not found" });
+  }
+
+  const tx = db.transaction(() => {
+    const newBal = u.balance_silver + addSilver;
+
+    db.prepare(`
+      UPDATE users SET balance_silver=? WHERE id=?
+    `).run(newBal, u.id);
+
+    db.prepare(`
+      INSERT INTO gold_ledger(user_id, delta_s, reason, ref, created_at)
+      VALUES (?,?,?,?,?)
+    `).run(u.id, addSilver, "ADMIN_ADD_GOLD", rawEmail, nowISO());
+
+    return newBal;
+  });
+
+  const finalBal = tx();
+
+  return res.json({
+    ok: true,
+    balance_silver: finalBal,
+    gold: Math.floor(finalBal / 100),
+    silver: finalBal % 100
+  });
+});
+
 // Lista svih knjiga (admin)
 app.get("/api/admin/books", (req, res) => {
   if (!isAdmin(req)) return res.status(401).json({ ok:false, error:"Unauthorized" });
 
   const rows = db.prepare(`
-    SELECT id, name, grade, pdf_path, price_silver
+    SELECT
+      id,
+      name,
+      author,
+      grade,
+      cover_image,
+      pdf_path,
+      price_silver
     FROM books
     ORDER BY grade, name
   `).all();
@@ -421,32 +467,60 @@ app.get("/api/admin/books", (req, res) => {
 app.post("/api/admin/books/save", (req, res) => {
   if (!isAdmin(req)) return res.status(401).json({ ok:false, error:"Unauthorized" });
 
-  const { id, name, grade, pdf_path, price_silver } = req.body || {};
+  const {
+    id,
+    name,
+    author,
+    grade,
+    pdf_path,
+    cover_image,
+    price_silver
+  } = req.body || {};
 
   if (!name || !grade || !pdf_path) {
     return res.status(400).json({ ok:false, error:"Missing fields" });
   }
 
   const price = Math.max(0, parseInt(price_silver || 0, 10));
+  const safeAuthor = String(author || "");
+  const safeCover  = String(cover_image || "");
 
   if (id) {
     db.prepare(`
       UPDATE books
          SET name         = ?,
+             author       = ?,
              grade        = ?,
+             cover_image  = ?,
              pdf_path     = ?,
              price_silver = ?
        WHERE id = ?
-    `).run(String(name), String(grade), String(pdf_path), price, parseInt(id, 10));
+    `).run(
+      String(name),
+      safeAuthor,
+      String(grade),
+      safeCover,
+      String(pdf_path),
+      price,
+      parseInt(id, 10)
+    );
   } else {
     db.prepare(`
-      INSERT INTO books(name, grade, pdf_path, price_silver)
-      VALUES (?,?,?,?)
-    `).run(String(name), String(grade), String(pdf_path), price);
+      INSERT INTO books(name, author, grade, cover_image, pdf_path, price_silver)
+      VALUES (?,?,?,?,?,?)
+    `).run(
+      String(name),
+      safeAuthor,
+      String(grade),
+      safeCover,
+      String(pdf_path),
+      price
+    );
   }
 
   res.json({ ok:true });
 });
+
 
 // Obriši knjigu (admin) — sigurnija verzija
 app.post("/api/admin/books/delete", (req, res) => {
@@ -650,7 +724,9 @@ app.get("/api/books/:grade", (req, res) => {
       SELECT
         b.id,
         b.name,
+        b.author,
         b.grade,
+        b.cover_image,
         b.price_silver,
         b.pdf_path,
         (SELECT 1 FROM user_books ub WHERE ub.user_id = ? AND ub.book_id = b.id) AS owned
@@ -738,14 +814,19 @@ app.get("/api/books/open/:id", (req, res) => {
   }
 });
 
-// ----------------- USER INVENTORY -----------------
 app.get("/api/my/books", (req, res) => {
   let uid;
   try { uid = requireAuth(req); }
   catch { return res.status(401).json({ ok:false, error:"Not logged in" }); }
 
   const rows = db.prepare(`
-    SELECT b.id, b.name, b.grade, b.pdf_path
+    SELECT
+      b.id,
+      b.name,
+      b.author,
+      b.grade,
+      b.cover_image,
+      b.pdf_path
     FROM user_books ub
     JOIN books b ON b.id = ub.book_id
     WHERE ub.user_id = ?
