@@ -282,24 +282,6 @@ try { db.exec("ALTER TABLE books ADD COLUMN author TEXT DEFAULT ''"); } catch (e
 try { db.exec("ALTER TABLE books ADD COLUMN cover_image TEXT DEFAULT ''"); } catch (e) {}
 
 
-/* ---------- DODAJ PRIMJER KNJIGA ---------- */
-
-// 1. razred
-ensureBook("Matematika 1", "1", 0, "/pdf/1/matematika1.pdf");
-ensureBook("Bosanski jezik 1", "1", 0, "/pdf/1/bosanski1.pdf");
-ensureBook("Moja okolina 1", "1", 0, "/pdf/1/okolina1.pdf");
-
-// 2. razred
-ensureBook("Matematika 2", "2", 0, "/pdf/2/matematika2.pdf");
-ensureBook("Bosanski jezik 2", "2", 0, "/pdf/2/bosanski2.pdf");
-
-// 1. srednja (1s)
-ensureBook("Matematika 1s", "1s", 150, "/pdf/1s/matematika1s.pdf");
-ensureBook("Engleski 1s", "1s", 120, "/pdf/1s/engleski1s.pdf");
-
-// Ostalo
-ensureBook("Programiranje JS", "ostalo", 500, "/pdf/ostalo/js.pdf");
-
 // ----------------- AUTH -----------------
 app.post("/api/register", async (req, res) => {
   try {
