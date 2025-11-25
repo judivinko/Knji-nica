@@ -1,289 +1,352 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="hr">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Online Knjižnica</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Online Knjižnica</title>
 
-  <style>
-    :root{
-      --bg:#020617;
-      --accent:#22c55e;
-      --accent-soft:rgba(34,197,94,0.15);
-      --danger:#ef4444;
-      --text:#e5e7eb;
-      --muted:#9ca3af;
-      --border:#1f2937;
-    }
-    *{box-sizing:border-box;}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:#020617;
-      color:var(--text);
-    }
-    .wrap{max-width:1100px;margin:0 auto;padding:16px;}
+<style>
+/* ------------------- iOS Premium Design ------------------- */
+:root{
+  --bg:#f5f5f7;
+  --panel:#ffffff;
+  --accent:#007aff;
+  --text:#1c1c1e;
+  --muted:#8e8e93;
+  --radius:16px;
+  --shadow:0 8px 25px rgba(0,0,0,0.12);
+}
 
-    header{
-      display:flex;justify-content:space-between;align-items:center;
-      background:#030a1a;border:1px solid var(--border);
-      padding:10px 14px;border-radius:14px;margin-bottom:16px;
-    }
-    .btn{padding:6px 12px;border-radius:999px;background:var(--accent);
-      color:#022c22;font-size:12px;font-weight:600;cursor:pointer;border:none;}
-    .btn-ghost{padding:6px 12px;border-radius:999px;background:transparent;
-      border:1px solid var(--border);color:var(--muted);font-size:12px;cursor:pointer;}
-    .grade-btn{
-      padding:6px 10px;border-radius:999px;background:#0f172a;border:1px solid #1e293b;
-      color:var(--muted);cursor:pointer;font-size:12px;
-    }
-    .grade-btn.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent);}
-    .book-card{
-      background:#0f172a;border:1px solid #1f2937;padding:10px;border-radius:12px;
-      display:flex;gap:10px;
-    }
-    .book-img{width:80px;height:110px;border-radius:8px;object-fit:cover;}
-    .badge-owned{background:rgba(34,197,94,0.22);color:var(--accent);
-      padding:2px 6px;border-radius:999px;font-size:10px;margin-bottom:3px;display:inline-block;}
-  </style>
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:-apple-system, BlinkMacSystemFont, "SF Pro", "Segoe UI", Roboto, sans-serif;
+  color:var(--text);
+  height:100vh;
+  display:flex;
+}
 
-  <!-- PayPal SDK auto-loaded via JS -->
-  <script id="paypalSDK"></script>
+.sidebar{
+  width:260px;
+  padding:20px;
+  background:#ffffffcc;
+  backdrop-filter:blur(30px);
+  box-shadow:2px 0 25px rgba(0,0,0,0.1);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.sidebar h2{
+  margin:0 0 10px;
+  font-size:22px;
+  font-weight:700;
+}
+
+.grade-btn{
+  padding:12px 16px;
+  background:#fff;
+  border-radius:var(--radius);
+  border:1px solid #e0e0e5;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.15s;
+  text-align:left;
+}
+
+.grade-btn:hover{
+  background:#f0f0f5;
+}
+
+.grade-btn.active{
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent);
+}
+
+.main{
+  flex:1;
+  display:flex;
+  gap:20px;
+  padding:20px;
+  overflow:hidden;
+}
+
+/* Books grid */
+.books-panel{
+  flex:2;
+  background:var(--panel);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:20px;
+  overflow-y:auto;
+}
+
+.books-title{
+  font-size:24px;
+  font-weight:700;
+  margin-bottom:20px;
+}
+
+/* iOS card */
+.book-card{
+  background:#fff;
+  border-radius:var(--radius);
+  padding:16px;
+  display:flex;
+  gap:16px;
+  box-shadow:var(--shadow);
+  cursor:pointer;
+  transition:.2s;
+}
+
+.book-card:hover{
+  transform:translateY(-3px);
+}
+
+.book-img{
+  width:90px;
+  height:120px;
+  background:#ddd;
+  border-radius:var(--radius);
+  background-size:cover;
+  background-position:center;
+}
+
+.book-info{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.book-title{
+  font-size:18px;
+  font-weight:700;
+}
+
+.book-author{
+  color:var(--muted);
+  font-size:14px;
+}
+
+/* Right panel */
+.details-panel{
+  flex:1.2;
+  background:#ffffffcc;
+  border-radius:var(--radius);
+  backdrop-filter:blur(20px);
+  box-shadow:var(--shadow);
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.details-panel h3{
+  margin:0;
+  font-size:22px;
+}
+
+.btn{
+  padding:12px 18px;
+  border-radius:var(--radius);
+  border:none;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:600;
+}
+
+.btn-accent{
+  background:var(--accent);
+  color:#fff;
+}
+
+.btn-outline{
+  background:#fff;
+  border:2px solid var(--accent);
+  color:var(--accent);
+}
+
+/* Scrollbars hidden */
+.books-panel::-webkit-scrollbar,
+.details-panel::-webkit-scrollbar{
+  width:0;
+}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
 
-    <!-- HEADER -->
-    <header>
-      <div style="font-size:17px;font-weight:600;">Online Knjižnica</div>
-      <div id="userBox"></div>
-    </header>
+<!-- ---------------- Sidebar (Razredi) ---------------- -->
+<div class="sidebar" id="sidebar">
+  <h2>Razredi</h2>
 
-    <!-- AUTH -->
-    <div id="authBox" style="margin-bottom:16px;">
-      <div>
-        <input id="email" placeholder="Email" style="padding:6px 8px;width:180px;border-radius:6px;border:1px solid #1e293b;background:#0f172a;color:white;">
-        <input id="pass" type="password" placeholder="Lozinka" style="padding:6px 8px;width:150px;border-radius:6px;border:1px solid #1e293b;background:#0f172a;color:white;">
-        <button class="btn" onclick="login()">Prijava</button>
-        <button class="btn-ghost" onclick="registerUser()">Registracija</button>
-      </div>
-      <div id="authError" style="color:var(--danger);font-size:12px;margin-top:4px;"></div>
-    </div>
+  <button class="grade-btn" data-grade="1">1. razred</button>
+  <button class="grade-btn" data-grade="2">2. razred</button>
+  <button class="grade-btn" data-grade="3">3. razred</button>
+  <button class="grade-btn" data-grade="4">4. razred</button>
+  <button class="grade-btn" data-grade="5">5. razred</button>
+  <button class="grade-btn" data-grade="6">6. razred</button>
+  <button class="grade-btn" data-grade="7">7. razred</button>
+  <button class="grade-btn" data-grade="8">8. razred</button>
+  <button class="grade-btn" data-grade="9">9. razred</button>
 
-    <!-- RAZREDI -->
-    <div id="gradesBox" style="display:none;margin-bottom:16px;flex-wrap:wrap;gap:6px;">
-      <script>
-        const grades = ["1","2","3","4","5","6","7","8","9","1s","2s","3s","4s","ostalo"];
-      </script>
-      <div id="grades"></div>
-    </div>
+  <h2 style="margin-top:20px;">Srednja</h2>
+  <button class="grade-btn" data-grade="1s">1. srednja</button>
+  <button class="grade-btn" data-grade="2s">2. srednja</button>
+  <button class="grade-btn" data-grade="3s">3. srednja</button>
+  <button class="grade-btn" data-grade="4s">4. srednja</button>
+</div>
 
-    <!-- KNJIGE -->
-    <h2 id="booksTitle" style="margin-bottom:10px;">Knjige</h2>
-    <div id="booksContainer"></div>
+<!-- ---------------- Sredina + Desno ---------------- -->
+<div class="main">
 
+  <!-- SREDINA – KNJIGE -->
+  <div class="books-panel">
+    <div class="books-title" id="booksTitle">Odaberi razred</div>
+    <div id="booksContainer">—</div>
   </div>
 
+  <!-- DESNO – DETALJI KNJIGE + PayPal -->
+  <div class="details-panel" id="detailsPanel">
+    <h3>Detalji</h3>
+    <div id="detailsContent">Odaberi knjigu.</div>
 
+    <button id="btnBuy" class="btn btn-accent" style="display:none;">Kupi</button>
+    <button id="btnOpen" class="btn btn-outline" style="display:none;">Otvori PDF</button>
+
+    <hr style="margin:10px 0;">
+    <h3>PayPal</h3>
+    <div id="paypal-button-container"></div>
+  </div>
+
+</div>
+
+
+
+<!-- ---------------- JAVASCRIPT ---------------- -->
 <script>
-let state={user:null, grade:null};
+// GLOBAL STATE
+let currentGrade = null;
+let selectedBook = null;
 
-/* ---------------------- AUTH ---------------------- */
-async function fetchMe(){
-  try{
-    let r=await fetch("/api/me");
-    let d=await r.json();
-    state.user=d.ok?d.user:null;
-  }catch{ state.user=null; }
-  renderUser();
-}
+// Sidebar click → load grade books
+document.querySelectorAll(".grade-btn").forEach(btn=>{
+  btn.onclick = ()=>{
+    currentGrade = btn.dataset.grade;
 
-async function login(){
-  const email=document.getElementById("email").value.trim();
-  const pass=document.getElementById("pass").value.trim();
-  const out=document.getElementById("authError");
-  out.textContent="";
+    document.querySelectorAll(".grade-btn").forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+
+    loadBooks(currentGrade);
+  };
+});
+
+async function loadBooks(grade){
+  document.getElementById("booksTitle").textContent = "Učitavam...";
+  const box = document.getElementById("booksContainer");
+
   try{
-    let r=await fetch("/api/login",{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({email,password:pass})
+    const res = await fetch(`/api/books/${grade}`);
+    const data = await res.json();
+
+    if(!data.ok) throw 0;
+
+    document.getElementById("booksTitle").textContent = `Knjige za ${grade}. razred`;
+
+    if(data.books.length===0){
+      box.innerHTML = "<p>Nema knjiga.</p>";
+      return;
+    }
+
+    box.innerHTML = data.books.map(b=>{
+      const img = b.img ? `/slike/${b.img}` : `/slike/default.png`;
+      return `
+      <div class="book-card" data-id="${b.id}">
+        <div class="book-img" style="background-image:url('${img}')"></div>
+        <div class="book-info">
+          <div>
+            <div class="book-title">${b.name}</div>
+            <div class="book-author">${b.author||""}</div>
+          </div>
+          <div style="font-weight:600;opacity:.7;">${b.price_silver==0?"Besplatno":Math.floor(b.price_silver/100)+" G"}</div>
+        </div>
+      </div>`;
+    }).join("");
+
+    document.querySelectorAll(".book-card").forEach(c=>{
+      c.onclick = ()=> openDetails(c.dataset.id);
     });
-    let d=await r.json();
-    if(!d.ok){ out.textContent=d.error;return; }
-    await fetchMe();
-  }catch{ out.textContent="Greška."; }
-}
 
-async function registerUser(){
-  const email=document.getElementById("email").value.trim();
-  const pass=document.getElementById("pass").value.trim();
-  const out=document.getElementById("authError");
-  out.textContent="";
-  try{
-    let r=await fetch("/api/register",{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({email,password:pass})
-    });
-    let d=await r.json();
-    if(!d.ok){ out.textContent=d.error;return; }
-    out.textContent="Račun kreiran. Prijavi se.";
-  }catch{ out.textContent="Greška."; }
-}
-
-async function logout(){
-  await fetch("/api/logout");
-  state.user=null;
-  state.grade=null;
-  renderUser();
-}
-
-/* ---------------------- UI ---------------------- */
-function renderUser(){
-  const box=document.getElementById("userBox");
-  const authBox=document.getElementById("authBox");
-  const grades=document.getElementById("gradesBox");
-
-  if(!state.user){
-    box.innerHTML=`<span style="color:var(--muted)">Niste prijavljeni</span>`;
-    authBox.style.display="block";
-    grades.style.display="none";
-    document.getElementById("booksContainer").innerHTML="";
-    return;
+  }catch{
+    box.innerHTML="<p>Greška.</p>";
   }
+}
 
-  const g=Math.floor(state.user.balance_silver/100);
-  const s=state.user.balance_silver%100;
+async function openDetails(id){
+  selectedBook=id;
 
-  box.innerHTML=`
-    <span style="margin-right:10px;">${state.user.email}</span>
-    <span style="margin-right:10px;">${g}G / ${s}S</span>
-    <button class="btn-ghost" onclick="openPay()">Kupi silver</button>
-    ${state.user.is_admin ? `<a class="btn-ghost" href="/admin">Admin</a>` : ""}
-    <button class="btn-ghost" onclick="logout()">Odjava</button>
+  const res = await fetch(`/api/books/info/${id}`);
+  const data = await res.json();
+
+  const panel = document.getElementById("detailsContent");
+  panel.innerHTML = `
+    <h3>${data.book.name}</h3>
+    <p><b>Autor:</b> ${data.book.author}</p>
+    <p><b>Cijena:</b> ${data.book.price_silver==0?"Besplatno":Math.floor(data.book.price_silver/100)+" G"}</p>
   `;
 
-  authBox.style.display="none";
-  grades.style.display="flex";
-  showGradeButtons();
+  document.getElementById("btnBuy").style.display = data.book.owned? "none":"block";
+  document.getElementById("btnOpen").style.display = data.book.owned? "block":"none";
 }
 
-function showGradeButtons(){
-  let html="";
-  grades.forEach(g=>{
-    html+=`<button class="grade-btn" onclick="loadGrade('${g}')">${g}</button>`;
-  });
-  document.getElementById("grades").innerHTML=html;
-}
-
-/* ---------------------- LOAD BOOKS ---------------------- */
-async function loadGrade(g){
-  state.grade=g;
-  let r=await fetch("/api/books/"+g);
-  let d=await r.json();
-  if(!d.ok){ alert("Greška."); return; }
-  renderBooks(d.books);
-}
-
-function renderBooks(list){
-  const box=document.getElementById("booksContainer");
-  if(list.length===0){
-    box.innerHTML=`<div style="color:var(--muted);">Nema knjiga.</div>`;
-    return;
-  }
-  let html="";
-  list.forEach(b=>{
-    const img=`/slike/${b.name}.png`;
-    const owned=b.owned?`<div class="badge-owned">Kupljeno</div>`:"";
-    const price=b.price_silver<=0 ? "Besplatno" : formatPrice(b.price_silver);
-    html += `
-      <div class="book-card" data-id="${b.id}">
-        <img src="${img}" class="book-img" onerror="this.src='/slike/default.png'">
-        <div style="flex:1;">
-          ${owned}
-          <div style="font-size:14px;font-weight:600;">${b.name}</div>
-          <div style="font-size:12px;color:var(--muted);">Razred: ${b.grade}</div>
-          <div style="margin-top:6px;font-size:13px;">${price}</div>
-
-          ${
-            b.owned
-            ? `<button class="btn-ghost" onclick="openBook(${b.id})">Otvori</button>`
-            : `<button class="btn" onclick="buyBook(${b.id})">Kupi</button>`
-          }
-        </div>
-      </div>
-      <br>
-    `;
-  });
-  box.innerHTML=html;
-}
-
-function formatPrice(s){
-  s|=0;
-  if(s<=0) return "Besplatno";
-  const g=Math.floor(s/100), c=s%100;
-  return c===0?`${g} G`:`${g} G ${c} S`;
-}
-
-/* ---------------------- BUY / OPEN ---------------------- */
-async function buyBook(id){
-  let r=await fetch("/api/books/buy",{
+// Kupi
+document.getElementById("btnBuy").onclick = async ()=>{
+  const res = await fetch("/api/books/buy",{
     method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({book_id:id})
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ book_id:selectedBook })
   });
-  let d=await r.json();
-  if(!d.ok){ alert(d.error); return; }
-  await fetchMe();
-  loadGrade(state.grade);
-}
+  const data = await res.json();
+  if(data.ok){
+    openDetails(selectedBook);
+  }else{
+    alert(data.error || "Greška");
+  }
+};
 
-async function openBook(id){
-  let r=await fetch("/api/books/open/"+id);
-  let d=await r.json();
-  if(!d.ok){ alert(d.error); return; }
-  window.open(d.pdf,"_blank");
-}
+// Otvori PDF
+document.getElementById("btnOpen").onclick = async ()=>{
+  const res = await fetch(`/api/books/open/${selectedBook}`);
+  const data = await res.json();
+  if(data.ok && data.pdf){
+    window.open(data.pdf,"_blank");
+  }
+};
+</script>
 
-/* ---------------------- PAYPAL ---------------------- */
-function openPay(){
-  let usd=prompt("Unesi iznos u USD (min 1):","");
-  if(!usd) return;
-  usd=Number(usd);
-  if(usd<1){ alert("Minimalno $1"); return; }
-  createPayOrder(usd);
-}
-
-async function createPayOrder(amount){
-  const cfg = await (await fetch("/api/paypal/config")).json();
-  if(!cfg.ok){ alert("PayPal nije konfiguriran."); return; }
-
-  document.getElementById("paypalSDK").src =
-    `https://www.paypal.com/sdk/js?client-id=${cfg.client_id}&currency=USD`;
-
-  paypal.Buttons({
-    createOrder: async ()=>{
-      let r=await fetch("/api/paypal/create-order",{
-        method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({amount_usd:amount})
-      });
-      let d=await r.json();
-      return d.id;
-    },
-    onApprove: async (data)=>{
-      let r=await fetch("/api/paypal/confirm",{
-        method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({orderId:data.orderID})
-      });
-      let d=await r.json();
-      if(!d.ok){ alert("Greška pri potvrdi."); return; }
-      await fetchMe();
-      alert("Uspješno uplaćeno!");
-    }
-  }).render("body");
-}
-
-/* ---------------------- INIT ---------------------- */
-fetchMe();
+<!-- ---------------- PAYPAL (iz Artefakta) ---------------- -->
+<script>
+(async function loadPayPalSDK(){
+  try{
+    const r = await fetch("/api/paypal/config", { credentials:"include" });
+    const j = await r.json();
+    if(!j.ok || !j.client_id){ return; }
+    const qs=new URLSearchParams({"client-id":j.client_id,"currency":j.currency||"USD","intent":"capture","components":"buttons"});
+    const s=document.createElement("script");
+    s.src=`https://www.paypal.com/sdk/js?${qs.toString()}`;
+    s.async=true;
+    s.onload=()=>{
+      paypal.Buttons({
+        createOrder:(d,a)=>a.order.create({purchase_units:[{amount:{value:"1.00"}}]}),
+        onApprove:async (d,a)=>{await a.order.capture();alert("Hvala!");}
+      }).render("#paypal-button-container");
+    };
+    document.head.appendChild(s);
+  }catch{}
+})();
 </script>
 
 </body>
