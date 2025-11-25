@@ -8,8 +8,6 @@
   <style>
     :root{
       --bg:#020617;
-      --bg2:#02081f;
-      --card:#02081f;
       --accent:#22c55e;
       --accent-soft:rgba(34,197,94,0.15);
       --danger:#ef4444;
@@ -17,457 +15,275 @@
       --muted:#9ca3af;
       --border:#1f2937;
     }
-    *{ box-sizing:border-box; }
-
+    *{box-sizing:border-box;}
     body{
       margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,sans-serif;
-      background:radial-gradient(circle at top,#0b1120 0,#020617 55%,#000 100%);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:#020617;
       color:var(--text);
     }
-
-    .wrap{
-      max-width:1100px;
-      margin:0 auto;
-      padding:16px;
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-    }
+    .wrap{max-width:1100px;margin:0 auto;padding:16px;}
 
     header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:10px 14px;
-      background:linear-gradient(135deg,#020617,#02081f);
-      border:1px solid var(--border);
-      border-radius:14px;
-      box-shadow:0 18px 45px rgba(0,0,0,0.7);
-      position:sticky;
-      top:0;
-      z-index:10;
-      gap:12px;
+      display:flex;justify-content:space-between;align-items:center;
+      background:#030a1a;border:1px solid var(--border);
+      padding:10px 14px;border-radius:14px;margin-bottom:16px;
     }
-
-    .logo-title h1{
-      margin:0;
-      font-size:18px;
-      text-transform:uppercase;
+    .btn{padding:6px 12px;border-radius:999px;background:var(--accent);
+      color:#022c22;font-size:12px;font-weight:600;cursor:pointer;border:none;}
+    .btn-ghost{padding:6px 12px;border-radius:999px;background:transparent;
+      border:1px solid var(--border);color:var(--muted);font-size:12px;cursor:pointer;}
+    .grade-btn{
+      padding:6px 10px;border-radius:999px;background:#0f172a;border:1px solid #1e293b;
+      color:var(--muted);cursor:pointer;font-size:12px;
     }
-    .logo-title span{
-      font-size:11px;
-      color:var(--muted);
-    }
-
-    .btn{
-      padding:6px 12px;
-      border-radius:999px;
-      border:none;
-      background:var(--accent);
-      color:#022c22;
-      font-size:12px;
-      font-weight:600;
-      cursor:pointer;
-    }
-
-    .btn-ghost{
-      padding:5px 11px;
-      border-radius:999px;
-      background:transparent;
-      border:1px solid var(--border);
-      color:var(--muted);
-      font-size:11px;
-      cursor:pointer;
-    }
-
-    .pill{
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:11px;
-      background:rgba(15,23,42,0.9);
-      border:1px solid var(--border);
-      color:var(--muted);
-      display:flex;
-      gap:6px;
-    }
-
-    .layout{
-      display:grid;
-      grid-template-columns:260px minmax(0,1fr);
-      gap:14px;
-    }
-
-    @media(max-width:800px){
-      .layout{ grid-template-columns:1fr; }
-    }
-
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      padding:14px;
-      border-radius:14px;
-      box-shadow:0 18px 40px rgba(0,0,0,0.75);
-    }
-
-    /* knjige grid */
-    .books-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-      gap:12px;
-    }
+    .grade-btn.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent);}
     .book-card{
-      display:flex;
-      gap:10px;
-      background:radial-gradient(circle at top,#02081f 0,#020617 65%);
-      border:1px solid #111827;
-      border-radius:12px;
-      padding:10px;
-      position:relative;
-      min-height:110px;
+      background:#0f172a;border:1px solid #1f2937;padding:10px;border-radius:12px;
+      display:flex;gap:10px;
     }
-
-    /* ✔ nova slika */
-    .book-img{
-      width:80px;
-      height:110px;
-      background:#111827;
-      background-size:cover;
-      background-position:center;
-      border-radius:6px;
-      flex-shrink:0;
-    }
-
-    .book-title{ font-size:13px; font-weight:600; }
-    .book-author{ font-size:11px; color:var(--muted); }
-
-    .price-tag{
-      padding:3px 7px;
-      border-radius:999px;
-      background:#111827;
-      border:1px solid #1f2937;
-      font-size:11px;
-    }
-    .price-free{
-      background:var(--accent-soft);
-      border-color:var(--accent);
-      color:var(--accent);
-    }
-
-    .book-actions{
-      margin-top:6px;
-      display:flex;
-      gap:6px;
-    }
-
-    .btn-small{
-      padding:4px 8px;
-      border-radius:999px;
-      font-size:11px;
-      border:none;
-      cursor:pointer;
-    }
-    .btn-outline{
-      border:1px solid var(--border);
-      background:transparent;
-      color:var(--muted);
-    }
-
-    .badge-owned{
-      position:absolute;
-      top:6px;
-      right:8px;
-      background:rgba(34,197,94,0.18);
-      color:var(--accent);
-      padding:2px 6px;
-      border-radius:999px;
-      font-size:10px;
-      border:1px solid rgba(34,197,94,0.3);
-    }
+    .book-img{width:80px;height:110px;border-radius:8px;object-fit:cover;}
+    .badge-owned{background:rgba(34,197,94,0.22);color:var(--accent);
+      padding:2px 6px;border-radius:999px;font-size:10px;margin-bottom:3px;display:inline-block;}
   </style>
+
+  <!-- PayPal SDK auto-loaded via JS -->
+  <script id="paypalSDK"></script>
 </head>
-
 <body>
-<div class="wrap">
+  <div class="wrap">
 
-<header>
-  <div class="logo-title">
-    <h1>Online Knjižnica</h1>
-    <span>PDF knjige • škole</span>
-  </div>
-
-  <div class="user-box" id="userBox"></div>
-</header>
-
-<main>
-  <div class="layout">
+    <!-- HEADER -->
+    <header>
+      <div style="font-size:17px;font-weight:600;">Online Knjižnica</div>
+      <div id="userBox"></div>
+    </header>
 
     <!-- AUTH -->
-    <section>
-      <div class="card" id="authCard">
-        <div style="display:flex;gap:6px;margin-bottom:10px;">
-          <button class="btn-ghost" style="flex:1" data-tab="login">Prijava</button>
-          <button class="btn-ghost" style="flex:1" data-tab="register">Registracija</button>
-        </div>
-
-        <!-- LOGIN -->
-        <form id="loginForm">
-          <input id="loginEmail" placeholder="Email" required style="width:100%;margin-bottom:6px;">
-          <input id="loginPass" type="password" placeholder="Lozinka" required style="width:100%;margin-bottom:6px;">
-          <button class="btn" style="width:100%;">Prijavi se</button>
-          <div class="error" id="loginError"></div>
-        </form>
-
-        <!-- REGISTER -->
-        <form id="registerForm" style="display:none;">
-          <input id="regEmail" placeholder="Email" required style="width:100%;margin-bottom:6px;">
-          <input id="regPass" type="password" placeholder="Lozinka (min 6)" required style="width:100%;margin-bottom:6px;">
-          <button class="btn" style="width:100%;">Registriraj</button>
-          <div class="error" id="regError"></div>
-        </form>
+    <div id="authBox" style="margin-bottom:16px;">
+      <div>
+        <input id="email" placeholder="Email" style="padding:6px 8px;width:180px;border-radius:6px;border:1px solid #1e293b;background:#0f172a;color:white;">
+        <input id="pass" type="password" placeholder="Lozinka" style="padding:6px 8px;width:150px;border-radius:6px;border:1px solid #1e293b;background:#0f172a;color:white;">
+        <button class="btn" onclick="login()">Prijava</button>
+        <button class="btn-ghost" onclick="registerUser()">Registracija</button>
       </div>
+      <div id="authError" style="color:var(--danger);font-size:12px;margin-top:4px;"></div>
+    </div>
 
-      <!-- Razredi -->
-      <div class="card" id="gradesCard" style="display:none;margin-top:10px;">
-        <h3 style="margin:0 0 8px;">Razredi</h3>
-        <div class="grade-grid" id="gradeButtons">
-          <button class="grade-btn" data-grade="1">1</button>
-          <button class="grade-btn" data-grade="2">2</button>
-          <button class="grade-btn" data-grade="3">3</button>
-          <button class="grade-btn" data-grade="4">4</button>
-          <button class="grade-btn" data-grade="5">5</button>
-          <button class="grade-btn" data-grade="6">6</button>
-          <button class="grade-btn" data-grade="7">7</button>
-          <button class="grade-btn" data-grade="8">8</button>
-          <button class="grade-btn" data-grade="9">9</button>
-        </div>
+    <!-- RAZREDI -->
+    <div id="gradesBox" style="display:none;margin-bottom:16px;flex-wrap:wrap;gap:6px;">
+      <script>
+        const grades = ["1","2","3","4","5","6","7","8","9","1s","2s","3s","4s","ostalo"];
+      </script>
+      <div id="grades"></div>
+    </div>
 
-        <button class="btn-ghost" id="btnMyBooks" style="margin-top:10px;width:100%;">Moje knjige</button>
-
-        <div id="gradeStatus" style="font-size:12px;color:var(--muted);margin-top:6px;">
-          Odaberi razred.
-        </div>
-      </div>
-    </section>
-
-    <!-- BOOKS -->
-    <section class="card">
-      <h2 id="booksTitle">Knjige</h2>
-      <span id="booksSubtitle" style="font-size:12px;color:var(--muted);"></span>
-
-      <div id="booksContainer" style="margin-top:10px;">
-        <div style="padding:18px;text-align:center;color:var(--muted);">
-          Prijavi se da vidiš knjige.
-        </div>
-      </div>
-    </section>
+    <!-- KNJIGE -->
+    <h2 id="booksTitle" style="margin-bottom:10px;">Knjige</h2>
+    <div id="booksContainer"></div>
 
   </div>
-</main>
 
-</div>
 
 <script>
-const state = {
-  user:null,
-  currentGrade:null,
-  showingMyBooks:false
-};
+let state={user:null, grade:null};
 
-function formatPrice(s){
-  s = s|0;
-  if(s<=0) return "Besplatno";
-  const g = Math.floor(s/100);
-  const c = s%100;
-  return c===0 ? g+" G" : g+" G "+c+" S";
+/* ---------------------- AUTH ---------------------- */
+async function fetchMe(){
+  try{
+    let r=await fetch("/api/me");
+    let d=await r.json();
+    state.user=d.ok?d.user:null;
+  }catch{ state.user=null; }
+  renderUser();
 }
 
-/* HEADER */
-function renderUserBox(){
-  const box = document.getElementById("userBox");
+async function login(){
+  const email=document.getElementById("email").value.trim();
+  const pass=document.getElementById("pass").value.trim();
+  const out=document.getElementById("authError");
+  out.textContent="";
+  try{
+    let r=await fetch("/api/login",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({email,password:pass})
+    });
+    let d=await r.json();
+    if(!d.ok){ out.textContent=d.error;return; }
+    await fetchMe();
+  }catch{ out.textContent="Greška."; }
+}
+
+async function registerUser(){
+  const email=document.getElementById("email").value.trim();
+  const pass=document.getElementById("pass").value.trim();
+  const out=document.getElementById("authError");
+  out.textContent="";
+  try{
+    let r=await fetch("/api/register",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({email,password:pass})
+    });
+    let d=await r.json();
+    if(!d.ok){ out.textContent=d.error;return; }
+    out.textContent="Račun kreiran. Prijavi se.";
+  }catch{ out.textContent="Greška."; }
+}
+
+async function logout(){
+  await fetch("/api/logout");
+  state.user=null;
+  state.grade=null;
+  renderUser();
+}
+
+/* ---------------------- UI ---------------------- */
+function renderUser(){
+  const box=document.getElementById("userBox");
+  const authBox=document.getElementById("authBox");
+  const grades=document.getElementById("gradesBox");
 
   if(!state.user){
-    box.innerHTML = `<div class="pill">Nisi prijavljen</div>`;
+    box.innerHTML=`<span style="color:var(--muted)">Niste prijavljeni</span>`;
+    authBox.style.display="block";
+    grades.style.display="none";
+    document.getElementById("booksContainer").innerHTML="";
     return;
   }
 
-  const saldoG = Math.floor(state.user.balance_silver/100);
-  const saldoS = state.user.balance_silver%100;
+  const g=Math.floor(state.user.balance_silver/100);
+  const s=state.user.balance_silver%100;
 
-  box.innerHTML = `
-    <div class="pill"><strong>${state.user.email}</strong></div>
-    <div class="pill">${saldoG} G / ${saldoS} S</div>
-
-    ${state.user.is_admin ? `<a href="/admin" class="btn-ghost">Admin</a>` : ""}
-
-    <button class="btn-ghost" id="btnLogout">Odjava</button>
+  box.innerHTML=`
+    <span style="margin-right:10px;">${state.user.email}</span>
+    <span style="margin-right:10px;">${g}G / ${s}S</span>
+    <button class="btn-ghost" onclick="openPay()">Kupi silver</button>
+    ${state.user.is_admin ? `<a class="btn-ghost" href="/admin">Admin</a>` : ""}
+    <button class="btn-ghost" onclick="logout()">Odjava</button>
   `;
 
-  document.getElementById("btnLogout").onclick = async ()=>{
-    await fetch("/api/logout");
-    location.reload();
-  };
+  authBox.style.display="none";
+  grades.style.display="flex";
+  showGradeButtons();
 }
 
-/* PRIKAZ KNJIGA */
-function renderBooksList(title, subtitle, books){
-  const cont = document.getElementById("booksContainer");
-  document.getElementById("booksTitle").textContent = title;
-  document.getElementById("booksSubtitle").textContent = subtitle;
-
-  if(!books || books.length===0){
-    cont.innerHTML = `
-      <div style="padding:18px;color:var(--muted);text-align:center;">
-        Nema knjiga.
-      </div>`;
-    return;
-  }
-
-  cont.innerHTML = `
-    <div class="books-grid">
-      ${books.map(b=>{
-        const img = "/slike/" + encodeURIComponent(b.name) + ".png";
-        const owned = b.owned || b._owned;
-        const free = (b.price_silver|0) === 0;
-
-        return `
-        <article class="book-card" data-id="${b.id}">
-          ${owned ? `<span class="badge-owned">Kupljeno</span>` : ``}
-
-          <div class="book-img"
-               style="background-image:url('${img}');"
-               onerror="this.style.background='linear-gradient(135deg,#22c55e,#16a34a)'">
-          </div>
-
-          <div style="flex:1;">
-            <div class="book-title">${b.name}</div>
-            <div class="book-author">${b.author || ""}</div>
-
-            <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;">
-              <span>Razred: ${b.grade}</span>
-              <span class="price-tag ${free?'price-free':''}">${formatPrice(b.price_silver)}</span>
-            </div>
-
-            <div class="book-actions">
-              ${owned
-                ? `<button class="btn-outline btn-small" data-act="open">Otvori</button>`
-                : `<button class="btn btn-small" data-act="buy">Kupi</button>`
-              }
-            </div>
-          </div>
-        </article>`;
-      }).join("")}
-    </div>
-  `;
-
-  cont.querySelectorAll(".book-card").forEach(card=>{
-    card.addEventListener("click", async e=>{
-      const act = e.target.closest("[data-act]")?.dataset.act;
-      const id = parseInt(card.dataset.id);
-      if(!id) return;
-
-      if(act==="buy") buyBook(id);
-      else if(act==="open") openBook(id);
-    });
+function showGradeButtons(){
+  let html="";
+  grades.forEach(g=>{
+    html+=`<button class="grade-btn" onclick="loadGrade('${g}')">${g}</button>`;
   });
+  document.getElementById("grades").innerHTML=html;
 }
 
-/* KUPI KNJIGU */
-async function buyBook(id){
-  if(!state.user){ alert("Prvo se prijavi."); return; }
+/* ---------------------- LOAD BOOKS ---------------------- */
+async function loadGrade(g){
+  state.grade=g;
+  let r=await fetch("/api/books/"+g);
+  let d=await r.json();
+  if(!d.ok){ alert("Greška."); return; }
+  renderBooks(d.books);
+}
 
-  const res = await fetch("/api/books/buy",{
+function renderBooks(list){
+  const box=document.getElementById("booksContainer");
+  if(list.length===0){
+    box.innerHTML=`<div style="color:var(--muted);">Nema knjiga.</div>`;
+    return;
+  }
+  let html="";
+  list.forEach(b=>{
+    const img=`/slike/${b.name}.png`;
+    const owned=b.owned?`<div class="badge-owned">Kupljeno</div>`:"";
+    const price=b.price_silver<=0 ? "Besplatno" : formatPrice(b.price_silver);
+    html += `
+      <div class="book-card" data-id="${b.id}">
+        <img src="${img}" class="book-img" onerror="this.src='/slike/default.png'">
+        <div style="flex:1;">
+          ${owned}
+          <div style="font-size:14px;font-weight:600;">${b.name}</div>
+          <div style="font-size:12px;color:var(--muted);">Razred: ${b.grade}</div>
+          <div style="margin-top:6px;font-size:13px;">${price}</div>
+
+          ${
+            b.owned
+            ? `<button class="btn-ghost" onclick="openBook(${b.id})">Otvori</button>`
+            : `<button class="btn" onclick="buyBook(${b.id})">Kupi</button>`
+          }
+        </div>
+      </div>
+      <br>
+    `;
+  });
+  box.innerHTML=html;
+}
+
+function formatPrice(s){
+  s|=0;
+  if(s<=0) return "Besplatno";
+  const g=Math.floor(s/100), c=s%100;
+  return c===0?`${g} G`:`${g} G ${c} S`;
+}
+
+/* ---------------------- BUY / OPEN ---------------------- */
+async function buyBook(id){
+  let r=await fetch("/api/books/buy",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({book_id:id})
   });
-  const data = await res.json();
-
-  if(!data.ok){ alert(data.error); return; }
-
-  state.user.balance_silver = data.balance_silver;
-  renderUserBox();
-
-  if(state.showingMyBooks) loadMyBooks();
-  else loadBooks(state.currentGrade);
+  let d=await r.json();
+  if(!d.ok){ alert(d.error); return; }
+  await fetchMe();
+  loadGrade(state.grade);
 }
 
-/* OTVORI */
 async function openBook(id){
-  const res = await fetch("/api/books/open/"+id);
-  const data = await res.json();
-  if(!data.ok){ alert(data.error); return; }
-  window.open(data.pdf, "_blank");
+  let r=await fetch("/api/books/open/"+id);
+  let d=await r.json();
+  if(!d.ok){ alert(d.error); return; }
+  window.open(d.pdf,"_blank");
 }
 
-/* LOADING */
-async function loadBooks(grade){
-  state.currentGrade = grade;
-  state.showingMyBooks = false;
-
-  const res = await fetch("/api/books/"+grade);
-  const data = await res.json();
-  renderBooksList("Knjige za razred "+grade,"",data.books||[]);
+/* ---------------------- PAYPAL ---------------------- */
+function openPay(){
+  let usd=prompt("Unesi iznos u USD (min 1):","");
+  if(!usd) return;
+  usd=Number(usd);
+  if(usd<1){ alert("Minimalno $1"); return; }
+  createPayOrder(usd);
 }
 
-async function loadMyBooks(){
-  state.showingMyBooks = true;
+async function createPayOrder(amount){
+  const cfg = await (await fetch("/api/paypal/config")).json();
+  if(!cfg.ok){ alert("PayPal nije konfiguriran."); return; }
 
-  const res = await fetch("/api/my/books");
-  const data = await res.json();
+  document.getElementById("paypalSDK").src =
+    `https://www.paypal.com/sdk/js?client-id=${cfg.client_id}&currency=USD`;
 
-  const list = (data.books||[]).map(b=>({...b,_owned:true}));
-  renderBooksList("Moje knjige","Kupljene knjige",list);
+  paypal.Buttons({
+    createOrder: async ()=>{
+      let r=await fetch("/api/paypal/create-order",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({amount_usd:amount})
+      });
+      let d=await r.json();
+      return d.id;
+    },
+    onApprove: async (data)=>{
+      let r=await fetch("/api/paypal/confirm",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({orderId:data.orderID})
+      });
+      let d=await r.json();
+      if(!d.ok){ alert("Greška pri potvrdi."); return; }
+      await fetchMe();
+      alert("Uspješno uplaćeno!");
+    }
+  }).render("body");
 }
 
-/* AUTH + INIT */
-document.querySelector("[data-tab='login']").onclick = ()=>{
-  loginForm.style.display="block";
-  registerForm.style.display="none";
-};
-document.querySelector("[data-tab='register']").onclick = ()=>{
-  loginForm.style.display="none";
-  registerForm.style.display="block";
-};
-
-loginForm.onsubmit = async e=>{
-  e.preventDefault();
-  const res = await fetch("/api/login",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({email:loginEmail.value,password:loginPass.value})
-  });
-  const data = await res.json();
-  if(!data.ok){ loginError.textContent=data.error; return; }
-  location.reload();
-};
-
-registerForm.onsubmit = async e=>{
-  e.preventDefault();
-  const res = await fetch("/api/register",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({email:regEmail.value,password:regPass.value})
-  });
-  const data = await res.json();
-  if(!data.ok){ regError.textContent=data.error; return; }
-  alert("Račun kreiran. Sada se prijavi.");
-  location.reload();
-};
-
-/* INIT */
-(async ()=>{
-  const me = await fetch("/api/me").then(r=>r.json()).catch(()=>null);
-  if(me && me.ok) state.user = me.user;
-
-  renderUserBox();
-
-  if(state.user){
-    document.getElementById("authCard").style.display="none";
-    document.getElementById("gradesCard").style.display="block";
-  }
-})();
-
+/* ---------------------- INIT ---------------------- */
+fetchMe();
 </script>
 
 </body>
