@@ -448,18 +448,31 @@ app.post("/api/admin/books/save", (req, res) => {
   res.json({ ok:true });
 });
 
-// Obriši knjigu (admin)
+// Obriši knjigu (admin) — sigurnija verzija
 app.post("/api/admin/books/delete", (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ ok:false, error:"Unauthorized" });
+  try {
+    if (!isAdmin(req)) {
+      return res.status(401).json({ ok: false, error: "Unauthorized" });
+    }
 
-  const { id } = req.body || {};
-  const bid = parseInt(id, 10);
-  if (!bid) return res.status(400).json({ ok:false, error:"Missing id" });
+    const bid = Number(req.body && req.body.id);
+    if (!Number.isInteger(bid) || bid <= 0) {
+      return res.status(400).json({ ok: false, error: "Bad id" });
+    }
 
-  db.prepare("DELETE FROM books WHERE id=?").run(bid);
-  db.prepare("DELETE FROM user_books WHERE book_id=?").run(bid);
+    // prvo obriši user_books, pa books (ako su uključeni foreign_keys)
+    const tx = db.transaction((id) => {
+      db.prepare("DELETE FROM user_books WHERE book_id=?").run(id);
+      db.prepare("DELETE FROM books WHERE id=?").run(id);
+    });
 
-  res.json({ ok:true });
+    tx(bid);
+
+    return res.json({ ok: true });
+  } catch (e) {
+    console.error("[/api/admin/books/delete] error:", e);
+    return res.status(500).json({ ok: false, error: String(e.message || e) });
+  }
 });
 
 // ----------------- PAYPAL CONFIRM (KNJIŽNICA VERZIJA — BEZ BONUS CODE) -----------------
