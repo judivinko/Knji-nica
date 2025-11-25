@@ -6,7 +6,6 @@
 <title>Online Knjižnica</title>
 
 <style>
-/* ------------------- iOS Premium Design ------------------- */
 :root{
   --bg:#f5f5f7;
   --panel:#ffffffcc;
@@ -21,14 +20,14 @@
 body{
   margin:0;
   background:var(--bg);
-  font-family:-apple-system, BlinkMacSystemFont, "SF Pro", "Segoe UI", Roboto, sans-serif;
+  font-family:-apple-system, BlinkMacSystemFont,"SF Pro","Segoe UI",Roboto,sans-serif;
   color:var(--text);
   height:100vh;
   display:flex;
   overflow:hidden;
 }
 
-/* ---------------- LOGIN + REGISTER FULLSCREEN ---------------- */
+/* ------------ LOGIN FULLSCREEN ------------ */
 .fullscreen{
   position:fixed;
   inset:0;
@@ -52,9 +51,9 @@ body{
 
 .glass-box h2{
   margin-top:0;
+  text-align:center;
   font-size:26px;
   font-weight:700;
-  text-align:center;
 }
 
 .input{
@@ -69,12 +68,12 @@ body{
 .btn{
   width:100%;
   padding:14px;
+  margin-top:10px;
   border:none;
   border-radius:var(--radius);
   font-size:17px;
   font-weight:600;
   cursor:pointer;
-  margin-top:10px;
 }
 
 .btn-accent{
@@ -82,23 +81,12 @@ body{
   color:#fff;
 }
 
-.link{
-  margin-top:14px;
-  text-align:center;
-  font-size:15px;
-  color:var(--accent);
-  cursor:pointer;
-}
-
-/* HIDE */
 .hidden{ display:none; }
 
-/* ---------------- HEADER BAR ---------------- */
+/* ------------ HEADER ------------ */
 .header{
   position:fixed;
-  top:0;
-  left:0;
-  right:0;
+  top:0; left:0; right:0;
   height:60px;
   background:var(--panel);
   backdrop-filter:blur(20px);
@@ -110,23 +98,11 @@ body{
   z-index:500;
 }
 
-.header-user{
-  font-size:15px;
-  opacity:0.8;
-}
+.header-user{ font-size:15px; opacity:0.8; }
+.header-gold{ font-size:18px; font-weight:700; }
+.logout{ color:#d00; cursor:pointer; }
 
-.header-gold{
-  font-size:18px;
-  font-weight:700;
-}
-
-.logout{
-  color:#d00;
-  cursor:pointer;
-  font-size:15px;
-}
-
-/* ---------------- SIDEBAR ---------------- */
+/* ------------ SIDEBAR ------------ */
 .sidebar{
   margin-top:60px;
   width:260px;
@@ -153,17 +129,16 @@ body{
   font-size:16px;
   font-weight:600;
   cursor:pointer;
-  transition:.15s;
   text-align:left;
+  transition:.15s;
 }
 
 .grade-btn.active{
   background:var(--accent);
   color:#fff;
-  border-color:var(--accent);
 }
 
-/* ---------------- LAYOUT ---------------- */
+/* ------------ MAIN ------------ */
 .main{
   flex:1;
   margin-top:60px;
@@ -173,13 +148,13 @@ body{
   overflow:hidden;
 }
 
-/* Books grid */
+/* BOOKS LIST */
 .books-panel{
   flex:2;
   background:#fff;
   border-radius:var(--radius);
-  box-shadow:var(--shadow);
   padding:20px;
+  box-shadow:var(--shadow);
   overflow-y:auto;
 }
 
@@ -189,17 +164,16 @@ body{
   margin-bottom:20px;
 }
 
-/* iOS card */
 .book-card{
   background:#fff;
   border-radius:var(--radius);
   padding:16px;
   display:flex;
   gap:16px;
-  box-shadow:var(--shadow);
-  cursor:pointer;
-  transition:.2s;
   margin-bottom:12px;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+  transition:.2s;
 }
 
 .book-card:hover{
@@ -209,8 +183,8 @@ body{
 .book-img{
   width:90px;
   height:120px;
-  background:#ddd;
   border-radius:var(--radius);
+  background:#ddd;
   background-size:cover;
   background-position:center;
 }
@@ -228,72 +202,61 @@ body{
 }
 
 .book-author{
-  color:var(--muted);
   font-size:14px;
+  color:var(--muted);
 }
 
-/* Right panel */
+/* DETAILS */
 .details-panel{
   flex:1.2;
   background:#ffffffcc;
   border-radius:var(--radius);
-  backdrop-filter:blur(20px);
-  box-shadow:var(--shadow);
   padding:20px;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.details-panel h3{
-  margin:0;
-  font-size:22px;
-}
-
-/* Scrollbars hidden */
-.books-panel::-webkit-scrollbar,
-.details-panel::-webkit-scrollbar{
-  width:0;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(20px);
 }
 </style>
 </head>
 
 <body>
 
-<!-- ---------------- FULLSCREEN LOGIN ---------------- -->
+<!-- LOGIN -->
 <div id="loginScreen" class="fullscreen">
   <div class="glass-box">
     <h2>Prijava</h2>
-    <input id="loginEmail" type="text" class="input" placeholder="Email">
+    <input id="loginEmail" class="input" placeholder="Email">
     <input id="loginPass" type="password" class="input" placeholder="Lozinka">
     <button id="btnLogin" class="btn btn-accent">Prijavi se</button>
     <div id="loginError" style="color:red;text-align:center;margin-top:10px;"></div>
-    <div class="link" id="goRegister">Nemaš račun? Registruj se</div>
+    <div class="link" id="goRegister" style="text-align:center;color:#007aff;cursor:pointer;margin-top:10px;">
+      Nemaš račun? Registruj se
+    </div>
   </div>
 </div>
 
-<!-- ---------------- FULLSCREEN REGISTER ---------------- -->
+<!-- REGISTER -->
 <div id="registerScreen" class="fullscreen hidden">
   <div class="glass-box">
     <h2>Registracija</h2>
-    <input id="regEmail" type="text" class="input" placeholder="Email">
+    <input id="regEmail" class="input" placeholder="Email">
     <input id="regPass" type="password" class="input" placeholder="Lozinka (min 6)">
     <button id="btnRegister" class="btn btn-accent">Kreiraj račun</button>
     <div id="regError" style="color:red;text-align:center;margin-top:10px;"></div>
-    <div class="link" id="goLogin">Već imaš račun? Prijava</div>
+    <div id="goLogin" style="text-align:center;color:#007aff;cursor:pointer;margin-top:10px;">
+      Već imaš račun? Prijava
+    </div>
   </div>
 </div>
 
-<!-- ---------------- HEADER ---------------- -->
+<!-- HEADER -->
 <div id="header" class="header hidden">
-  <div class="header-user" id="headerEmail"></div>
-  <div class="header-gold" id="headerGold"></div>
-  <div class="logout" id="btnLogout">Odjava</div>
+  <div id="headerEmail" class="header-user"></div>
+  <div id="headerGold" class="header-gold"></div>
+  <div id="btnLogout" class="logout">Odjava</div>
 </div>
 
-<!-- ---------------- SIDEBAR + MAIN ---------------- -->
+<!-- APP CONTENT -->
 <div id="appContent" class="hidden" style="display:flex;width:100%;">
-  
   <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
     <h2>Razredi</h2>
@@ -318,43 +281,38 @@ body{
     <button class="grade-btn" data-grade="knjige">Knjige</button>
   </div>
 
-  <!-- MAIN -->
+  <!-- MAIN CONTENT -->
   <div class="main">
-
-    <!-- BOOKS -->
     <div class="books-panel">
       <div class="books-title" id="booksTitle">Odaberi razred</div>
       <div id="booksContainer">—</div>
     </div>
 
-    <!-- DETAILS -->
     <div class="details-panel" id="detailsPanel">
       <h3>Detalji</h3>
       <div id="detailsContent">Odaberi knjigu.</div>
 
       <button id="btnBuy" class="btn btn-accent" style="display:none;">Kupi</button>
       <button id="btnOpen" class="btn btn-outline" style="display:none;">Otvori PDF</button>
-
-      <hr style="margin:10px 0;">
-      <h3>PayPal</h3>
-      <div id="paypal-button-container"></div>
     </div>
-
   </div>
 </div>
 
 <script>
-/* -------------------------------- LOGIN LOGIC -------------------------------- */
+/* ------------------ LOGIN / REGISTER ------------------ */
+
 function showLogin(){
   loginScreen.classList.remove("hidden");
   registerScreen.classList.add("hidden");
   header.classList.add("hidden");
   appContent.classList.add("hidden");
 }
+
 function showRegister(){
   loginScreen.classList.add("hidden");
   registerScreen.classList.remove("hidden");
 }
+
 function showApp(){
   loginScreen.classList.add("hidden");
   registerScreen.classList.add("hidden");
@@ -362,9 +320,11 @@ function showApp(){
   appContent.classList.remove("hidden");
 }
 
-document.getElementById("goRegister").onclick=showRegister;
-document.getElementById("goLogin").onclick=showLogin;
+// Switch screens
+goRegister.onclick = showRegister;
+goLogin.onclick = showLogin;
 
+// Check if logged in
 async function checkMe(){
   try{
     const r = await fetch("/api/me");
@@ -373,38 +333,49 @@ async function checkMe(){
       headerEmail.textContent = j.user.email;
       headerGold.textContent = j.user.gold + " G";
       showApp();
-    } else showLogin();
-  }catch{ showLogin(); }
+    } else {
+      showLogin();
+    }
+  } catch {
+    showLogin();
+  }
 }
+
 checkMe();
 
+// Login
 btnLogin.onclick = async ()=>{
-  loginError.textContent="";
+  loginError.textContent = "";
   const email = loginEmail.value.trim();
   const pass  = loginPass.value.trim();
+
   const r = await fetch("/api/login",{
     method:"POST",
-    headers:{ "Content-Type":"application/json"},
-    body:JSON.stringify({email,password:pass})
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ email, password:pass })
   });
   const j = await r.json();
+
   if(!j.ok){
     loginError.textContent = j.error || "Greška";
   } else {
-    await checkMe();
+    checkMe();
   }
 };
 
+// Register
 btnRegister.onclick = async ()=>{
-  regError.textContent="";
+  regError.textContent = "";
   const email = regEmail.value.trim();
   const pass  = regPass.value.trim();
+
   const r = await fetch("/api/register",{
     method:"POST",
-    headers:{ "Content-Type":"application/json"},
-    body:JSON.stringify({email,password:pass})
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ email, password:pass })
   });
   const j = await r.json();
+
   if(!j.ok){
     regError.textContent = j.error || "Greška";
   } else {
@@ -413,15 +384,19 @@ btnRegister.onclick = async ()=>{
   }
 };
 
+// Logout
 btnLogout.onclick = async ()=>{
   await fetch("/api/logout");
   showLogin();
 };
 
-/* ---------------------------- BOOKS SYSTEM ---------------------------- */
-let currentGrade=null;
-let selectedBook=null;
 
+/* ------------------ BOOKS SYSTEM ------------------ */
+
+let currentGrade = null;
+let selectedBook = null;
+
+// Select grade
 document.querySelectorAll(".grade-btn").forEach(btn=>{
   btn.onclick = ()=>{
     currentGrade = btn.dataset.grade;
@@ -433,24 +408,28 @@ document.querySelectorAll(".grade-btn").forEach(btn=>{
   };
 });
 
+// Load books for grade
 async function loadBooks(grade){
-  booksTitle.textContent="Učitavam...";
-  const box=booksContainer;
+  booksTitle.textContent = "Učitavam...";
+  const box = booksContainer;
 
   const res = await fetch(`/api/books/${grade}`);
   const data = await res.json();
 
-  if(!data.ok){ box.innerHTML="<p>Greška.</p>"; return; }
+  if(!data.ok){
+    box.innerHTML = "<p>Greška.</p>";
+    return;
+  }
 
-  booksTitle.textContent=`Knjige za ${grade}`;
+  booksTitle.textContent = `Knjige za ${grade}`;
 
-  if(data.books.length===0){
-    box.innerHTML="<p>Nema knjiga.</p>";
+  if(data.books.length === 0){
+    box.innerHTML = "<p>Nema knjiga.</p>";
     return;
   }
 
   box.innerHTML = data.books.map(b=>{
-    const img = b.cover_image ? `/images/${b.cover_image}` : `/images/default.png`;
+    const img = b.cover_image ? b.cover_image : "/slike/default.jpg";
     return `
       <div class="book-card" data-id="${b.id}">
         <div class="book-img" style="background-image:url('${img}')"></div>
@@ -459,81 +438,65 @@ async function loadBooks(grade){
             <div class="book-title">${b.name}</div>
             <div class="book-author">${b.author}</div>
           </div>
-          <div style="font-weight:600;opacity:.7;">${b.price_silver==0?"Besplatno":Math.floor(b.price_silver/100)+" G"}</div>
+          <div style="font-weight:600;opacity:.7;">
+            ${b.price_silver==0 ? "Besplatno" : Math.floor(b.price_silver/100) + " G"}
+          </div>
         </div>
-      </div>
-    `;
+      </div>`;
   }).join("");
 
   document.querySelectorAll(".book-card").forEach(c=>{
-    c.onclick=()=>openDetails(c.dataset.id);
+    c.onclick = ()=> openDetails(c.dataset.id);
   });
 }
 
+// ------------------ OPEN DETAILS (bez /api/books/info) ------------------
 async function openDetails(id){
-  selectedBook=id;
+  selectedBook = id;
 
-  const res = await fetch(`/api/books/info/${id}`);
+  // Preuzmi grade knjiga i pronađi je lokalno
+  const res = await fetch(`/api/books/${currentGrade}`);
   const data = await res.json();
+  if(!data.ok) return;
+
+  const b = data.books.find(x=>x.id == id);
+  if(!b) return;
 
   detailsContent.innerHTML = `
-    <h3>${data.book.name}</h3>
-    <p><b>Autor:</b> ${data.book.author}</p>
-    <p><b>Cijena:</b> ${data.book.price_silver==0?"Besplatno":Math.floor(data.book.price_silver/100)+" G"}</p>
+    <h3>${b.name}</h3>
+    <p><b>Autor:</b> ${b.author}</p>
+    <p><b>Cijena:</b> ${b.price_silver==0 ? "Besplatno" : Math.floor(b.price_silver/100)+" G"}</p>
   `;
 
-  btnBuy.style.display = data.book.owned ? "none":"block";
-  btnOpen.style.display = data.book.owned ? "block":"none";
+  btnBuy.style.display  = b.owned ? "none"  : "block";
+  btnOpen.style.display = b.owned ? "block" : "none";
 }
 
+// Buy
 btnBuy.onclick = async ()=>{
   const r = await fetch("/api/books/buy",{
     method:"POST",
-    headers:{ "Content-Type":"application/json"},
+    headers:{ "Content-Type":"application/json" },
     body:JSON.stringify({ book_id:selectedBook })
   });
   const j = await r.json();
+
   if(j.ok){
     await checkMe();
     openDetails(selectedBook);
-  } else alert(j.error);
+  } else {
+    alert(j.error);
+  }
 };
 
+// Open PDF
 btnOpen.onclick = async ()=>{
   const r = await fetch(`/api/books/open/${selectedBook}`);
   const j = await r.json();
-  if(j.ok) window.open(j.pdf,"_blank");
+  if(j.ok){
+    window.open(j.pdf, "_blank");
+  }
 };
-
-</script>
-
-<!-- PAYPAL -->
-<script>
-(async function loadPayPalSDK(){
-  try{
-    const r=await fetch("/api/paypal/config",{ credentials:"include" });
-    const j=await r.json();
-    if(!j.ok || !j.client_id) return;
-
-    const qs=new URLSearchParams({
-      "client-id":j.client_id,
-      "currency":j.currency||"USD",
-      "intent":"capture",
-      "components":"buttons"
-    });
-    const s=document.createElement("script");
-    s.src=`https://www.paypal.com/sdk/js?${qs.toString()}`;
-    s.onload=()=>{
-      paypal.Buttons({
-        createOrder:(d,a)=>a.order.create({
-          purchase_units:[{amount:{value:"1.00"}}]
-        }),
-        onApprove:async(d,a)=>{ await a.order.capture(); alert("Hvala!"); }
-      }).render("#paypal-button-container");
-    };
-    document.head.appendChild(s);
-  }catch{}
-})();
 </script>
 
 </body>
