@@ -5,217 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Online Knjižnica</title>
 
-<style>
-:root{
-  --bg:#f5f5f7;
-  --panel:#ffffffcc;
-  --accent:#007aff;
-  --text:#1c1c1e;
-  --muted:#8e8e93;
-  --radius:16px;
-  --shadow:0 8px 25px rgba(0,0,0,0.12);
-  --glass:rgba(255,255,255,0.25);
-}
-
-body{
-  margin:0;
-  background:var(--bg);
-  font-family:-apple-system, BlinkMacSystemFont,"SF Pro","Segoe UI",Roboto,sans-serif;
-  color:var(--text);
-  height:100vh;
-  display:flex;
-  overflow:hidden;
-}
-
-/* ------------ LOGIN FULLSCREEN ------------ */
-.fullscreen{
-  position:fixed;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  backdrop-filter:blur(30px);
-  background:rgba(240,240,240,0.7);
-  z-index:9999;
-}
-
-.glass-box{
-  width:90%;
-  max-width:360px;
-  background:var(--glass);
-  backdrop-filter:blur(40px);
-  padding:30px;
-  border-radius:20px;
-  box-shadow:var(--shadow);
-}
-
-.glass-box h2{
-  margin-top:0;
-  text-align:center;
-  font-size:26px;
-  font-weight:700;
-}
-
-.input{
-  width:100%;
-  padding:14px;
-  margin:10px 0;
-  border-radius:var(--radius);
-  border:1px solid #ddd;
-  font-size:16px;
-}
-
-.btn{
-  width:100%;
-  padding:14px;
-  margin-top:10px;
-  border:none;
-  border-radius:var(--radius);
-  font-size:17px;
-  font-weight:600;
-  cursor:pointer;
-}
-
-.btn-accent{
-  background:var(--accent);
-  color:#fff;
-}
-
-.hidden{ display:none; }
-
-/* ------------ HEADER ------------ */
-.header{
-  position:fixed;
-  top:0; left:0; right:0;
-  height:60px;
-  background:var(--panel);
-  backdrop-filter:blur(20px);
-  box-shadow:0 2px 10px rgba(0,0,0,0.08);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 20px;
-  z-index:500;
-}
-
-.header-user{ font-size:15px; opacity:0.8; }
-.header-gold{ font-size:18px; font-weight:700; }
-.logout{ color:#d00; cursor:pointer; }
-
-/* ------------ SIDEBAR ------------ */
-.sidebar{
-  margin-top:60px;
-  width:260px;
-  padding:20px;
-  background:#ffffffcc;
-  backdrop-filter:blur(20px);
-  box-shadow:2px 0 25px rgba(0,0,0,0.1);
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.sidebar h2{
-  margin:0 0 10px;
-  font-size:22px;
-  font-weight:700;
-}
-
-.grade-btn{
-  padding:12px 16px;
-  background:#fff;
-  border-radius:var(--radius);
-  border:1px solid #e0e0e5;
-  font-size:16px;
-  font-weight:600;
-  cursor:pointer;
-  text-align:left;
-  transition:.15s;
-}
-
-.grade-btn.active{
-  background:var(--accent);
-  color:#fff;
-}
-
-/* ------------ MAIN ------------ */
-.main{
-  flex:1;
-  margin-top:60px;
-  display:flex;
-  gap:20px;
-  padding:20px;
-  overflow:hidden;
-}
-
-/* BOOKS LIST */
-.books-panel{
-  flex:2;
-  background:#fff;
-  border-radius:var(--radius);
-  padding:20px;
-  box-shadow:var(--shadow);
-  overflow-y:auto;
-}
-
-.books-title{
-  font-size:24px;
-  font-weight:700;
-  margin-bottom:20px;
-}
-
-.book-card{
-  background:#fff;
-  border-radius:var(--radius);
-  padding:16px;
-  display:flex;
-  gap:16px;
-  margin-bottom:12px;
-  cursor:pointer;
-  box-shadow:var(--shadow);
-  transition:.2s;
-}
-
-.book-card:hover{
-  transform:translateY(-3px);
-}
-
-.book-img{
-  width:90px;
-  height:120px;
-  border-radius:var(--radius);
-  background:#ddd;
-  background-size:cover;
-  background-position:center;
-}
-
-.book-info{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-}
-
-.book-title{
-  font-size:18px;
-  font-weight:700;
-}
-
-.book-author{
-  font-size:14px;
-  color:var(--muted);
-}
-
-/* DETAILS */
-.details-panel{
-  flex:1.2;
-  background:#ffffffcc;
-  border-radius:var(--radius);
-  padding:20px;
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(20px);
-}
-</style>
+<link rel="stylesheet" href="/app.css">
 </head>
 
 <body>
@@ -224,13 +14,14 @@ body{
 <div id="loginScreen" class="fullscreen">
   <div class="glass-box">
     <h2>Prijava</h2>
+
     <input id="loginEmail" class="input" placeholder="Email">
     <input id="loginPass" type="password" class="input" placeholder="Lozinka">
+
     <button id="btnLogin" class="btn btn-accent">Prijavi se</button>
-    <div id="loginError" style="color:red;text-align:center;margin-top:10px;"></div>
-    <div class="link" id="goRegister" style="text-align:center;color:#007aff;cursor:pointer;margin-top:10px;">
-      Nemaš račun? Registruj se
-    </div>
+    <div id="loginError" class="error-text"></div>
+
+    <div id="goRegister" class="link">Nemaš račun? Registruj se</div>
   </div>
 </div>
 
@@ -238,13 +29,14 @@ body{
 <div id="registerScreen" class="fullscreen hidden">
   <div class="glass-box">
     <h2>Registracija</h2>
+
     <input id="regEmail" class="input" placeholder="Email">
     <input id="regPass" type="password" class="input" placeholder="Lozinka (min 6)">
+
     <button id="btnRegister" class="btn btn-accent">Kreiraj račun</button>
-    <div id="regError" style="color:red;text-align:center;margin-top:10px;"></div>
-    <div id="goLogin" style="text-align:center;color:#007aff;cursor:pointer;margin-top:10px;">
-      Već imaš račun? Prijava
-    </div>
+    <div id="regError" class="error-text"></div>
+
+    <div id="goLogin" class="link">Već imaš račun? Prijava</div>
   </div>
 </div>
 
@@ -255,13 +47,14 @@ body{
   <div id="btnLogout" class="logout">Odjava</div>
 </div>
 
+
 <!-- APP CONTENT -->
-<div id="appContent" class="hidden" style="display:flex;width:100%;">
+<div id="appContent" class="hidden app-wrapper">
 
   <!-- SIDEBAR -->
-  <div class="sidebar" id="sidebar">
-    <h2>Razredi</h2>
+  <div class="sidebar">
 
+    <h2>Razredi</h2>
     <button class="grade-btn" data-grade="1">1. razred</button>
     <button class="grade-btn" data-grade="2">2. razred</button>
     <button class="grade-btn" data-grade="3">3. razred</button>
@@ -272,37 +65,41 @@ body{
     <button class="grade-btn" data-grade="8">8. razred</button>
     <button class="grade-btn" data-grade="9">9. razred</button>
 
-    <h2 style="margin-top:20px;">Srednja</h2>
-
+    <h2 style="margin-top:20px;">Srednja škola</h2>
     <button class="grade-btn" data-grade="1s">1. srednja</button>
     <button class="grade-btn" data-grade="2s">2. srednja</button>
     <button class="grade-btn" data-grade="3s">3. srednja</button>
     <button class="grade-btn" data-grade="4s">4. srednja</button>
     <button class="grade-btn" data-grade="knjige">knjige</button>
-  </div> <!-- ← OVAJ DIV JE NEDOSTAJAO !!! -->
+  </div>
 
 
-    
-
-  <!-- MAIN CONTENT -->
+  <!-- MAIN -->
   <div class="main">
+
+    <!-- BOOK LIST -->
     <div class="books-panel">
       <div class="books-title" id="booksTitle">Odaberi razred</div>
       <div id="booksContainer">—</div>
     </div>
 
-    <div class="details-panel" id="detailsPanel">
+    <!-- DETAILS -->
+    <div class="details-panel">
+
       <h3>Detalji</h3>
       <div id="detailsContent">Odaberi knjigu.</div>
 
       <button id="btnBuy" class="btn btn-accent" style="display:none;">Kupi</button>
       <button id="btnOpen" class="btn btn-outline" style="display:none;">Otvori PDF</button>
+
     </div>
+
   </div>
 </div>
 
+
 <script>
-/* ------------------ LOGIN / REGISTER ------------------ */
+// -------------------------------- LOGIN --------------------------------
 
 function showLogin(){
   loginScreen.classList.remove("hidden");
@@ -323,32 +120,34 @@ function showApp(){
   appContent.classList.remove("hidden");
 }
 
-// Switch screens
 goRegister.onclick = showRegister;
 goLogin.onclick = showLogin;
 
-// Check if logged in
+
+// CHECK SESSION
 async function checkMe(){
   try{
     const r = await fetch("/api/me");
     const j = await r.json();
+
     if(j.ok){
       headerEmail.textContent = j.user.email;
       headerGold.textContent = j.user.gold + " G";
       showApp();
-    } else {
-      showLogin();
-    }
-  } catch {
+    } else showLogin();
+
+  }catch{
     showLogin();
   }
 }
 
 checkMe();
 
-// Login
+
+// LOGIN
 btnLogin.onclick = async ()=>{
   loginError.textContent = "";
+
   const email = loginEmail.value.trim();
   const pass  = loginPass.value.trim();
 
@@ -357,8 +156,8 @@ btnLogin.onclick = async ()=>{
     headers:{ "Content-Type":"application/json" },
     body:JSON.stringify({ email, password:pass })
   });
-  const j = await r.json();
 
+  const j = await r.json();
   if(!j.ok){
     loginError.textContent = j.error || "Greška";
   } else {
@@ -366,9 +165,11 @@ btnLogin.onclick = async ()=>{
   }
 };
 
-// Register
+
+// REGISTER
 btnRegister.onclick = async ()=>{
   regError.textContent = "";
+
   const email = regEmail.value.trim();
   const pass  = regPass.value.trim();
 
@@ -377,6 +178,7 @@ btnRegister.onclick = async ()=>{
     headers:{ "Content-Type":"application/json" },
     body:JSON.stringify({ email, password:pass })
   });
+
   const j = await r.json();
 
   if(!j.ok){
@@ -387,55 +189,58 @@ btnRegister.onclick = async ()=>{
   }
 };
 
-// Logout
+
+// LOGOUT
 btnLogout.onclick = async ()=>{
   await fetch("/api/logout");
   showLogin();
 };
 
 
-/* ------------------ BOOKS SYSTEM ------------------ */
+
+// -------------------------------- BOOKS --------------------------------
 
 let currentGrade = null;
 let selectedBook = null;
 
-// Select grade
-document.querySelectorAll(".grade-btn").forEach(btn=>{
+document.querySelectorAll(".grade-btn").forEach(btn => {
   btn.onclick = ()=>{
     currentGrade = btn.dataset.grade;
 
-    document.querySelectorAll(".grade-btn").forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
+    document.querySelectorAll(".grade-btn").forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");
 
     loadBooks(currentGrade);
   };
 });
 
-// Load books for grade
+
+// LOAD
 async function loadBooks(grade){
   booksTitle.textContent = "Učitavam...";
-  const box = booksContainer;
 
   const res = await fetch(`/api/books/${grade}`);
   const data = await res.json();
 
   if(!data.ok){
-    box.innerHTML = "<p>Greška.</p>";
+    booksContainer.innerHTML = "<p>Greška.</p>";
     return;
   }
 
   booksTitle.textContent = `Knjige za ${grade}`;
 
   if(data.books.length === 0){
-    box.innerHTML = "<p>Nema knjiga.</p>";
+    booksContainer.innerHTML = "<p>Nema knjiga.</p>";
     return;
   }
 
-  box.innerHTML = data.books.map(b=>{
-    const img = b.cover_image ? b.cover_image : "/slike/default.jpg";
+  booksContainer.innerHTML = data.books.map(b=>{
+    const img = b.cover_image || "/slike/default.jpg";
+
     return `
       <div class="book-card" data-id="${b.id}">
         <div class="book-img" style="background-image:url('${img}')"></div>
+
         <div class="book-info">
           <div>
             <div class="book-title">${b.name}</div>
@@ -445,22 +250,22 @@ async function loadBooks(grade){
             ${b.price_silver==0 ? "Besplatno" : Math.floor(b.price_silver/100) + " G"}
           </div>
         </div>
-      </div>`;
+      </div>
+    `;
   }).join("");
 
   document.querySelectorAll(".book-card").forEach(c=>{
-    c.onclick = ()=> openDetails(c.dataset.id);
+    c.onclick = () => openDetails(c.dataset.id);
   });
 }
 
-// ------------------ OPEN DETAILS (bez /api/books/info) ------------------
+
+// DETAILS
 async function openDetails(id){
   selectedBook = id;
 
-  // Preuzmi grade knjiga i pronađi je lokalno
   const res = await fetch(`/api/books/${currentGrade}`);
   const data = await res.json();
-  if(!data.ok) return;
 
   const b = data.books.find(x=>x.id == id);
   if(!b) return;
@@ -468,22 +273,23 @@ async function openDetails(id){
   detailsContent.innerHTML = `
     <h3>${b.name}</h3>
     <p><b>Autor:</b> ${b.author}</p>
-    <p><b>Cijena:</b> ${b.price_silver==0 ? "Besplatno" : Math.floor(b.price_silver/100)+" G"}</p>
+    <p><b>Cijena:</b> ${b.price_silver==0 ? "Besplatno" : Math.floor(b.price_silver/100) + " G"}</p>
   `;
 
-  btnBuy.style.display  = b.owned ? "none"  : "block";
+  btnBuy.style.display  = b.owned ? "none" : "block";
   btnOpen.style.display = b.owned ? "block" : "none";
 }
 
-// Buy
+
+// BUY
 btnBuy.onclick = async ()=>{
   const r = await fetch("/api/books/buy",{
     method:"POST",
     headers:{ "Content-Type":"application/json" },
     body:JSON.stringify({ book_id:selectedBook })
   });
-  const j = await r.json();
 
+  const j = await r.json();
   if(j.ok){
     await checkMe();
     openDetails(selectedBook);
@@ -492,14 +298,17 @@ btnBuy.onclick = async ()=>{
   }
 };
 
-// Open PDF
+
+// OPEN PDF
 btnOpen.onclick = async ()=>{
   const r = await fetch(`/api/books/open/${selectedBook}`);
   const j = await r.json();
+
   if(j.ok){
-    window.open(j.pdf, "_blank");
+    window.open(j.pdf,"_blank");
   }
 };
+
 </script>
 
 </body>
