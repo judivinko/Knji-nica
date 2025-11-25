@@ -116,7 +116,7 @@ tr:nth-child(even) td{background:#1e293b;}
   </div>
 
   <div class="field">
-    <label>Slika (SAMO ime, npr: knjiga1.jpg) *</label>
+    <label>Slika (samo ime: knjiga1.jpg) *</label>
     <input id="bookImage" placeholder="knjiga1.jpg">
   </div>
 
@@ -124,10 +124,15 @@ tr:nth-child(even) td{background:#1e293b;}
     <label>Razred *</label>
     <select id="bookGrade">
       <option value="">-- odaberi --</option>
-      <option value="1">1</option><option value="2">2</option>
-      <option value="3">3</option><option value="4">4</option>
-      <option value="5">5</option><option value="6">6</option>
-      <option value="7">7</option><option value="8">8</option>
+
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
       <option value="9">9</option>
 
       <option value="1s">1. srednja</option>
@@ -184,25 +189,89 @@ tr:nth-child(even) td{background:#1e293b;}
 <script>
 let books = [];
 
-/* USER */
+/* ============================================================
+   ADMIN KEY LOGIN
+============================================================ */
+async function adminKeyLogin() {
+  const key = prompt("Unesi ADMIN KEY:");
+
+  if (!key) return alert("Prazan ključ.");
+
+  localStorage.setItem("ADMIN_KEY", key);
+
+  const test = await fetch("/api/admin/books", {
+    headers: { "x-admin-key": key }
+  });
+
+  const j = await test.json();
+
+  if (!j.ok) {
+    alert("Pogrešan ključ!");
+    localStorage.removeItem("ADMIN_KEY");
+    return;
+  }
+
+  adminBox.innerHTML =
+    `Prijavljen preko <b>ADMIN_KEY</b><br>
+     <button class='btn-ghost' onclick="logoutKey()">Odjava</button>`;
+
+  loadBooks();
+}
+
+function logoutKey(){
+  localStorage.removeItem("ADMIN_KEY");
+  location.reload();
+}
+
+function adminHeaders(extra = {}) {
+  const key = localStorage.getItem("ADMIN_KEY");
+  if (key) return { ...extra, "x-admin-key": key };
+  return extra;
+}
+
+/* ============================================================
+   USER / AUTH LOGIN
+============================================================ */
 async function loadUser(){
   const box=document.getElementById("adminBox");
+
+  // ako postoji admin key → preskoči normalni login
+  if (localStorage.getItem("ADMIN_KEY")) {
+    box.innerHTML =
+      `Prijavljen preko <b>ADMIN_KEY</b><br>
+       <button class='btn-ghost' onclick="logoutKey()">Odjava</button>`;
+    loadBooks();
+    return;
+  }
+
   try{
     const r=await fetch("/api/me");
     const d=await r.json();
+
     if(!d.ok || !d.user.is_admin){
-      box.innerHTML="Nemaš pristup adminu.";
+      box.innerHTML = `
+        Nemaš pristup adminu.<br><br>
+        <button class='btn' onclick='adminKeyLogin()'>Login preko KEY-a</button>
+      `;
       return;
     }
+
     box.innerHTML=`Prijavljen kao <b>${d.user.email}</b> (admin)
       <br><button class='btn-ghost' onclick="logout()">Odjava</button>`;
+
   }catch{
     box.innerHTML="Greška.";
   }
 }
-function logout(){ fetch("/api/logout").then(()=>location.reload()); }
 
-/* CLEAR FORM */
+function logout(){
+  localStorage.removeItem("ADMIN_KEY");
+  fetch("/api/logout").then(()=>location.reload());
+}
+
+/* ============================================================
+   CLEAR FORM
+============================================================ */
 function clearForm(){
   bookId.value="";
   bookName.value="";
@@ -214,27 +283,42 @@ function clearForm(){
   formStatus.textContent="";
 }
 
-/* LOAD BOOKS */
+/* ============================================================
+   LOAD BOOKS
+============================================================ */
 async function loadBooks(){
   listStatus.textContent="Učitavam...";
+
   try{
-    const r=await fetch("/api/admin/books");
+    const r=await fetch("/api/admin/books",{
+      headers: adminHeaders()
+    });
+
     const d=await r.json();
-    if(!d.ok){ listStatus.textContent=d.error; return; }
+
+    if(!d.ok){
+      listStatus.textContent=d.error;
+      return;
+    }
+
     books=d.books;
     listStatus.textContent="Učitano: "+books.length;
     renderTable();
+
   }catch{
     listStatus.textContent="Greška.";
   }
 }
 
-/* RENDER TABLE */
+/* ============================================================
+   RENDER TABLE
+============================================================ */
 function renderTable(){
   if(books.length===0){
     booksList.innerHTML="Nema knjiga.";
     return;
   }
+
   let html=`
   <table>
     <thead>
@@ -250,6 +334,7 @@ function renderTable(){
       </tr>
     </thead>
     <tbody>`;
+
   books.forEach(b=>{
     html+=`
       <tr>
@@ -266,11 +351,14 @@ function renderTable(){
         </td>
       </tr>`;
   });
+
   html+=`</tbody></table>`;
   booksList.innerHTML=html;
 }
 
-/* FILL FORM */
+/* ============================================================
+   EDIT BOOK
+============================================================ */
 function editBook(id){
   const b=books.find(x=>x.id===id);
   if(!b) return;
@@ -278,16 +366,15 @@ function editBook(id){
   bookId.value=b.id;
   bookName.value=b.name;
   bookAuthor.value=b.author;
-
-  // prikaži samo ime slike
   bookImage.value=b.cover_image.replace("/slike/","");
-
   bookGrade.value=b.grade;
   bookPrice.value=b.price_silver;
   bookPdf.value=b.pdf_path;
 }
 
-/* SAVE BOOK */
+/* ============================================================
+   SAVE BOOK
+============================================================ */
 async function saveBook(){
   formStatus.textContent="";
 
@@ -311,9 +398,10 @@ async function saveBook(){
 
   const r=await fetch("/api/admin/books/save",{
     method:"POST",
-    headers:{"Content-Type":"application/json"},
+    headers: adminHeaders({"Content-Type":"application/json"}),
     body:JSON.stringify(payload)
   });
+
   const d=await r.json();
 
   if(!d.ok){
@@ -329,25 +417,32 @@ async function saveBook(){
   if(!payload.id) clearForm();
 }
 
-/* DELETE BOOK */
+/* ============================================================
+   DELETE BOOK
+============================================================ */
 async function deleteBook(id){
   const r=await fetch("/api/admin/books/delete",{
     method:"POST",
-    headers:{"Content-Type":"application/json"},
+    headers: adminHeaders({"Content-Type":"application/json"}),
     body:JSON.stringify({id})
   });
+
   const d=await r.json();
+
   if(!d.ok){
     listStatus.textContent=d.error;
     listStatus.className="status err";
     return;
   }
+
   listStatus.textContent="Knjiga obrisana.";
   listStatus.className="status ok";
   loadBooks();
 }
 
-/* ADD GOLD */
+/* ============================================================
+   ADD GOLD
+============================================================ */
 async function addGold(){
   goldStatus.textContent="";
 
@@ -356,9 +451,10 @@ async function addGold(){
 
   const r=await fetch("/api/admin/add-gold",{
     method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({ email, gold:amount })  // ispravljeno
+    headers: adminHeaders({"Content-Type":"application/json"}),
+    body:JSON.stringify({ email, gold:amount })
   });
+
   const d=await r.json();
 
   if(!d.ok){
@@ -371,6 +467,7 @@ async function addGold(){
   goldStatus.className="status ok";
 }
 
+/* START */
 loadUser();
 loadBooks();
 </script>
