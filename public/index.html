@@ -1,10 +1,10 @@
-
 <!doctype html>
 <html lang="hr">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Online Knjižnica</title>
+
   <style>
     :root{
       --bg:#020617;
@@ -17,13 +17,15 @@
       --muted:#9ca3af;
       --border:#1f2937;
     }
-    *{box-sizing:border-box;}
+    *{ box-sizing:border-box; }
+
     body{
       margin:0;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      font-family:system-ui,-apple-system,Segoe UI,sans-serif;
       background:radial-gradient(circle at top,#0b1120 0,#020617 55%,#000 100%);
       color:var(--text);
     }
+
     .wrap{
       max-width:1100px;
       margin:0 auto;
@@ -32,42 +34,53 @@
       flex-direction:column;
       gap:16px;
     }
+
     header{
       display:flex;
       justify-content:space-between;
       align-items:center;
-      gap:12px;
       padding:10px 14px;
-      border-radius:14px;
       background:linear-gradient(135deg,#020617,#02081f);
       border:1px solid var(--border);
+      border-radius:14px;
       box-shadow:0 18px 45px rgba(0,0,0,0.7);
       position:sticky;
       top:0;
       z-index:10;
+      gap:12px;
     }
-    .logo-title{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-    }
+
     .logo-title h1{
       margin:0;
       font-size:18px;
-      letter-spacing:0.04em;
       text-transform:uppercase;
     }
     .logo-title span{
       font-size:11px;
       color:var(--muted);
     }
-    .user-box{
-      display:flex;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:flex-end;
-      gap:8px;
+
+    .btn{
+      padding:6px 12px;
+      border-radius:999px;
+      border:none;
+      background:var(--accent);
+      color:#022c22;
+      font-size:12px;
+      font-weight:600;
+      cursor:pointer;
     }
+
+    .btn-ghost{
+      padding:5px 11px;
+      border-radius:999px;
+      background:transparent;
+      border:1px solid var(--border);
+      color:var(--muted);
+      font-size:11px;
+      cursor:pointer;
+    }
+
     .pill{
       padding:6px 10px;
       border-radius:999px;
@@ -76,749 +89,386 @@
       border:1px solid var(--border);
       color:var(--muted);
       display:flex;
-      align-items:center;
       gap:6px;
     }
-    .pill strong{color:var(--text);}
-    button{
-      border:none;
-      cursor:pointer;
-      font:inherit;
-    }
-    .btn{
-      padding:6px 12px;
-      border-radius:999px;
-      background:var(--accent);
-      color:#022c22;
-      font-size:12px;
-      font-weight:600;
-      box-shadow:0 0 0 1px rgba(34,197,94,0.4),0 10px 25px rgba(34,197,94,0.25);
-      transition:transform .08s ease,box-shadow .08s ease,background .08s ease;
-      white-space:nowrap;
-    }
-    .btn:hover{
-      transform:translateY(-1px);
-      box-shadow:0 14px 30px rgba(34,197,94,0.35);
-      background:#4ade80;
-    }
-    .btn:active{
-      transform:translateY(0);
-      box-shadow:0 8px 20px rgba(34,197,94,0.2);
-    }
-    .btn-ghost{
-      padding:5px 11px;
-      border-radius:999px;
-      background:transparent;
-      border:1px solid var(--border);
-      color:var(--muted);
-      font-size:11px;
-    }
-    .btn-ghost:hover{
-      border-color:var(--accent);
-      color:var(--accent);
-      background:rgba(15,23,42,0.8);
-    }
-    main{
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      margin-top:4px;
-    }
+
     .layout{
       display:grid;
       grid-template-columns:260px minmax(0,1fr);
       gap:14px;
     }
-    @media (max-width:800px){
-      .layout{
-        grid-template-columns:1fr;
-      }
+
+    @media(max-width:800px){
+      .layout{ grid-template-columns:1fr; }
     }
 
-    /* Auth card */
     .card{
-      background:radial-gradient(circle at top,#02081f 0,#020617 55%,#020617 100%);
-      border-radius:14px;
+      background:var(--card);
       border:1px solid var(--border);
       padding:14px;
+      border-radius:14px;
       box-shadow:0 18px 40px rgba(0,0,0,0.75);
     }
-    .card h2{
-      margin:0 0 10px;
-      font-size:15px;
-    }
-    .tabs{
-      display:flex;
-      gap:6px;
-      margin-bottom:10px;
-      background:rgba(15,23,42,0.9);
-      padding:3px;
-      border-radius:999px;
-    }
-    .tab-btn{
-      flex:1;
-      padding:5px 8px;
-      border-radius:999px;
-      font-size:12px;
-      text-align:center;
-      background:transparent;
-      color:var(--muted);
-    }
-    .tab-btn.active{
-      background:var(--accent-soft);
-      color:var(--accent);
-      font-weight:600;
-    }
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:3px;
-      margin-bottom:8px;
-      font-size:12px;
-    }
-    .field label{
-      color:var(--muted);
-    }
-    .field input{
-      padding:6px 8px;
-      border-radius:8px;
-      border:1px solid #111827;
-      background:rgba(15,23,42,0.9);
-      color:var(--text);
-      font-size:13px;
-    }
-    .field input:focus{
-      outline:none;
-      border-color:var(--accent);
-      box-shadow:0 0 0 1px var(--accent-soft);
-    }
-    .error{
-      color:var(--danger);
-      font-size:11px;
-      min-height:14px;
-      margin-top:4px;
-    }
 
-    /* Grade buttons */
-    .grades-card{
-      margin-top:10px;
-    }
-    .grades-header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:6px;
-      margin-bottom:8px;
-    }
-    .grades-header h3{
-      margin:0;
-      font-size:13px;
-      color:var(--muted);
-    }
-    .grade-grid{
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-    }
-    .grade-btn{
-      padding:5px 8px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      font-size:12px;
-      background:rgba(15,23,42,0.9);
-      color:var(--muted);
-      min-width:36px;
-      text-align:center;
-    }
-    .grade-btn.active{
-      border-color:var(--accent);
-      background:var(--accent-soft);
-      color:var(--accent);
-      font-weight:600;
-    }
-
-    /* Books list */
-    .books-card{
-      min-height:200px;
-    }
-    .books-header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:8px;
-      margin-bottom:8px;
-    }
-    .books-header h2{
-      margin:0;
-      font-size:15px;
-    }
-    .books-header span{
-      font-size:12px;
-      color:var(--muted);
-    }
-    .books-empty{
-      padding:18px 10px;
-      color:var(--muted);
-      font-size:13px;
-      text-align:center;
-      border-radius:10px;
-      background:rgba(15,23,42,0.7);
-      border:1px dashed #1f2937;
-    }
+    /* knjige grid */
     .books-grid{
       display:grid;
-      grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
-      gap:10px;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:12px;
     }
     .book-card{
-      position:relative;
+      display:flex;
+      gap:10px;
+      background:radial-gradient(circle at top,#02081f 0,#020617 65%);
+      border:1px solid #111827;
       border-radius:12px;
       padding:10px;
-      background:radial-gradient(circle at top,#02081f 0,#020617 65%,#020617 100%);
-      border:1px solid #111827;
-      box-shadow:0 12px 26px rgba(0,0,0,0.8);
-      display:flex;
-      gap:8px;
-      min-height:96px;
+      position:relative;
+      min-height:110px;
     }
+
+    /* ✔ nova slika */
     .book-img{
-      width:52px;
-      height:72px;
+      width:80px;
+      height:110px;
+      background:#111827;
+      background-size:cover;
+      background-position:center;
       border-radius:6px;
-      background:linear-gradient(135deg,#22c55e,#16a34a);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:11px;
-      font-weight:700;
-      color:#022c22;
-      text-transform:uppercase;
-      letter-spacing:0.05em;
-      box-shadow:0 8px 20px rgba(22,163,74,0.55);
       flex-shrink:0;
     }
-    .book-body{
-      flex:1;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-      gap:4px;
-    }
-    .book-title{
-      font-size:13px;
-      font-weight:600;
-    }
-    .book-author{
-      font-size:11px;
-      color:var(--muted);
-    }
-    .book-meta{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:6px;
-      font-size:11px;
-    }
+
+    .book-title{ font-size:13px; font-weight:600; }
+    .book-author{ font-size:11px; color:var(--muted); }
+
     .price-tag{
       padding:3px 7px;
       border-radius:999px;
-      background:rgba(15,23,42,0.9);
-      border:1px solid #111827;
-      white-space:nowrap;
+      background:#111827;
+      border:1px solid #1f2937;
+      font-size:11px;
     }
     .price-free{
-      color:var(--accent);
-      border-color:var(--accent-soft);
       background:var(--accent-soft);
-    }
-    .book-actions{
-      display:flex;
-      gap:6px;
-      margin-top:4px;
-    }
-    .btn-small{
-      padding:4px 8px;
-      font-size:11px;
-      border-radius:999px;
-    }
-    .btn-outline{
-      padding:4px 8px;
-      border-radius:999px;
-      background:transparent;
-      border:1px solid var(--border);
-      color:var(--muted);
-      font-size:11px;
-    }
-    .btn-outline:hover{
       border-color:var(--accent);
       color:var(--accent);
-      background:rgba(15,23,42,0.8);
     }
+
+    .book-actions{
+      margin-top:6px;
+      display:flex;
+      gap:6px;
+    }
+
+    .btn-small{
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:11px;
+      border:none;
+      cursor:pointer;
+    }
+    .btn-outline{
+      border:1px solid var(--border);
+      background:transparent;
+      color:var(--muted);
+    }
+
     .badge-owned{
       position:absolute;
       top:6px;
       right:8px;
-      font-size:10px;
-      padding:2px 6px;
-      border-radius:999px;
       background:rgba(34,197,94,0.18);
       color:var(--accent);
-      border:1px solid rgba(34,197,94,0.35);
-    }
-
-    .status-line{
-      font-size:11px;
-      color:var(--muted);
-      margin-top:6px;
-      min-height:14px;
+      padding:2px 6px;
+      border-radius:999px;
+      font-size:10px;
+      border:1px solid rgba(34,197,94,0.3);
     }
   </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <header>
-      <div class="logo-title">
-        <h1>Online Knjižnica</h1>
-        <span>Školske knjige • PDF pristup</span>
-      </div>
-      <div class="user-box" id="userBox">
-        <!-- popunjava JS -->
-      </div>
-    </header>
+<div class="wrap">
 
-    <main>
-      <div class="layout">
-        <!-- Lijevo: auth + razredi -->
-        <section>
-          <div class="card" id="authCard">
-            <div class="tabs">
-              <button class="tab-btn active" data-tab="login">Prijava</button>
-              <button class="tab-btn" data-tab="register">Registracija</button>
-            </div>
-            <div id="authForms">
-              <form id="loginForm">
-                <div class="field">
-                  <label for="loginEmail">Email</label>
-                  <input id="loginEmail" type="email" autocomplete="email" required>
-                </div>
-                <div class="field">
-                  <label for="loginPass">Lozinka</label>
-                  <input id="loginPass" type="password" autocomplete="current-password" required>
-                </div>
-                <button type="submit" class="btn" style="width:100%;margin-top:4px;">Prijavi se</button>
-                <div class="error" id="loginError"></div>
-              </form>
-
-              <form id="registerForm" style="display:none;">
-                <div class="field">
-                  <label for="regEmail">Email</label>
-                  <input id="regEmail" type="email" autocomplete="email" required>
-                </div>
-                <div class="field">
-                  <label for="regPass">Lozinka (min 6 znakova)</label>
-                  <input id="regPass" type="password" autocomplete="new-password" required>
-                </div>
-                <button type="submit" class="btn" style="width:100%;margin-top:4px;">Napravi račun</button>
-                <div class="error" id="regError"></div>
-              </form>
-            </div>
-          </div>
-
-          <div class="card grades-card" id="gradesCard" style="display:none;">
-            <div class="grades-header">
-              <h3>Razredi</h3>
-              <button class="btn-ghost" id="btnMyBooks">Moje knjige</button>
-            </div>
-            <div class="grade-grid" id="gradeButtons">
-              <!-- 1–9 osnovna -->
-              <button class="grade-btn" data-grade="1">1</button>
-              <button class="grade-btn" data-grade="2">2</button>
-              <button class="grade-btn" data-grade="3">3</button>
-              <button class="grade-btn" data-grade="4">4</button>
-              <button class="grade-btn" data-grade="5">5</button>
-              <button class="grade-btn" data-grade="6">6</button>
-              <button class="grade-btn" data-grade="7">7</button>
-              <button class="grade-btn" data-grade="8">8</button>
-              <button class="grade-btn" data-grade="9">9</button>
-              <!-- 1–4 srednja -->
-              <button class="grade-btn" data-grade="1s">1.s</button>
-              <button class="grade-btn" data-grade="2s">2.s</button>
-              <button class="grade-btn" data-grade="3s">3.s</button>
-              <button class="grade-btn" data-grade="4s">4.s</button>
-            </div>
-            <div class="status-line" id="gradeStatus">
-              Odaberi razred za pregled knjiga.
-            </div>
-          </div>
-        </section>
-
-        <!-- Desno: lista knjiga -->
-        <section class="card books-card">
-          <div class="books-header">
-            <div>
-              <h2 id="booksTitle">Knjige</h2>
-              <span id="booksSubtitle">Prijavi se i odaberi razred.</span>
-            </div>
-          </div>
-          <div id="booksContainer">
-            <div class="books-empty">
-              Nema učitanih knjiga. Prvo se prijavi i odaberi razred ili klikni „Moje knjige”.
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
+<header>
+  <div class="logo-title">
+    <h1>Online Knjižnica</h1>
+    <span>PDF knjige • škole</span>
   </div>
 
-  <script>
-    const state = {
-      user: null,
-      currentGrade: null,
-      showingMyBooks: false
-    };
+  <div class="user-box" id="userBox"></div>
+</header>
 
-    function formatPrice(s){
-      s = s|0;
-      if(s<=0) return "Besplatno";
-      const g = Math.floor(s/100);
-      const c = s%100;
-      if(c===0) return g + " G";
-      return g + " G " + c + " S";
-    }
+<main>
+  <div class="layout">
 
-    function renderUserBox(){
-      const box = document.getElementById("userBox");
-      const gradesCard = document.getElementById("gradesCard");
-      if(!state.user){
-        box.innerHTML = `
-          <div class="pill">
-            <span>Nisi prijavljen/a</span>
-          </div>
-        `;
-        gradesCard.style.display = "none";
-        return;
-      }
-
-      const g = Math.floor((state.user.balance_silver||0)/100);
-      const s = (state.user.balance_silver||0)%100;
-
-      box.innerHTML = `
-        <div class="pill">
-          <span>Email:</span>
-          <strong>${state.user.email}</strong>
+    <!-- AUTH -->
+    <section>
+      <div class="card" id="authCard">
+        <div style="display:flex;gap:6px;margin-bottom:10px;">
+          <button class="btn-ghost" style="flex:1" data-tab="login">Prijava</button>
+          <button class="btn-ghost" style="flex:1" data-tab="register">Registracija</button>
         </div>
-        <div class="pill">
-          <span>Saldo:</span>
-          <strong>${g} G</strong>
-          <span style="opacity:.7;">/ ${s} S</span>
+
+        <!-- LOGIN -->
+        <form id="loginForm">
+          <input id="loginEmail" placeholder="Email" required style="width:100%;margin-bottom:6px;">
+          <input id="loginPass" type="password" placeholder="Lozinka" required style="width:100%;margin-bottom:6px;">
+          <button class="btn" style="width:100%;">Prijavi se</button>
+          <div class="error" id="loginError"></div>
+        </form>
+
+        <!-- REGISTER -->
+        <form id="registerForm" style="display:none;">
+          <input id="regEmail" placeholder="Email" required style="width:100%;margin-bottom:6px;">
+          <input id="regPass" type="password" placeholder="Lozinka (min 6)" required style="width:100%;margin-bottom:6px;">
+          <button class="btn" style="width:100%;">Registriraj</button>
+          <div class="error" id="regError"></div>
+        </form>
+      </div>
+
+      <!-- Razredi -->
+      <div class="card" id="gradesCard" style="display:none;margin-top:10px;">
+        <h3 style="margin:0 0 8px;">Razredi</h3>
+        <div class="grade-grid" id="gradeButtons">
+          <button class="grade-btn" data-grade="1">1</button>
+          <button class="grade-btn" data-grade="2">2</button>
+          <button class="grade-btn" data-grade="3">3</button>
+          <button class="grade-btn" data-grade="4">4</button>
+          <button class="grade-btn" data-grade="5">5</button>
+          <button class="grade-btn" data-grade="6">6</button>
+          <button class="grade-btn" data-grade="7">7</button>
+          <button class="grade-btn" data-grade="8">8</button>
+          <button class="grade-btn" data-grade="9">9</button>
         </div>
-        <button class="btn-ghost" id="btnLogout">Odjava</button>
-      `;
-      gradesCard.style.display = "block";
 
-      document.getElementById("btnLogout").onclick = async () => {
-        try{
-          await fetch("/api/logout");
-        }catch{}
-        state.user = null;
-        state.currentGrade = null;
-        state.showingMyBooks = false;
-        document.getElementById("booksContainer").innerHTML = `
-          <div class="books-empty">
-            Nema učitanih knjiga. Prijavi se ponovo.
-          </div>`;
-        document.getElementById("booksTitle").textContent = "Knjige";
-        document.getElementById("booksSubtitle").textContent = "Prijavi se i odaberi razred.";
-        syncAuthUI();
-        renderUserBox();
-      };
-    }
+        <button class="btn-ghost" id="btnMyBooks" style="margin-top:10px;width:100%;">Moje knjige</button>
 
-    function syncAuthUI(){
-      const authCard = document.getElementById("authCard");
-      if(state.user){
-        authCard.style.display = "none";
-      }else{
-        authCard.style.display = "block";
-      }
-    }
+        <div id="gradeStatus" style="font-size:12px;color:var(--muted);margin-top:6px;">
+          Odaberi razred.
+        </div>
+      </div>
+    </section>
 
-    function setActiveGradeButton(grade){
-      const btns = document.querySelectorAll(".grade-btn");
-      btns.forEach(b=>{
-        if(b.dataset.grade === grade) b.classList.add("active");
-        else b.classList.remove("active");
-      });
-    }
+    <!-- BOOKS -->
+    <section class="card">
+      <h2 id="booksTitle">Knjige</h2>
+      <span id="booksSubtitle" style="font-size:12px;color:var(--muted);"></span>
 
-    function renderBooksList(title, subtitle, books, options={}){
-      const cont = document.getElementById("booksContainer");
-      document.getElementById("booksTitle").textContent = title;
-      document.getElementById("booksSubtitle").textContent = subtitle || "";
+      <div id="booksContainer" style="margin-top:10px;">
+        <div style="padding:18px;text-align:center;color:var(--muted);">
+          Prijavi se da vidiš knjige.
+        </div>
+      </div>
+    </section>
 
-      if(!books || books.length===0){
-        cont.innerHTML = `
-          <div class="books-empty">
-            Trenutno nema knjiga za ovaj prikaz.
-          </div>`;
-        return;
-      }
+  </div>
+</main>
 
-      const html = books.map(b=>{
-        const priceText = formatPrice(b.price_silver|0);
-        const isFree = (b.price_silver|0) === 0;
-        const owned = !!b.owned || !!b._owned;
-        const gradeLabel = b.grade ? `Razred: ${b.grade}` : "";
+</div>
+
+<script>
+const state = {
+  user:null,
+  currentGrade:null,
+  showingMyBooks:false
+};
+
+function formatPrice(s){
+  s = s|0;
+  if(s<=0) return "Besplatno";
+  const g = Math.floor(s/100);
+  const c = s%100;
+  return c===0 ? g+" G" : g+" G "+c+" S";
+}
+
+/* HEADER */
+function renderUserBox(){
+  const box = document.getElementById("userBox");
+
+  if(!state.user){
+    box.innerHTML = `<div class="pill">Nisi prijavljen</div>`;
+    return;
+  }
+
+  const saldoG = Math.floor(state.user.balance_silver/100);
+  const saldoS = state.user.balance_silver%100;
+
+  box.innerHTML = `
+    <div class="pill"><strong>${state.user.email}</strong></div>
+    <div class="pill">${saldoG} G / ${saldoS} S</div>
+
+    ${state.user.is_admin ? `<a href="/admin" class="btn-ghost">Admin</a>` : ""}
+
+    <button class="btn-ghost" id="btnLogout">Odjava</button>
+  `;
+
+  document.getElementById("btnLogout").onclick = async ()=>{
+    await fetch("/api/logout");
+    location.reload();
+  };
+}
+
+/* PRIKAZ KNJIGA */
+function renderBooksList(title, subtitle, books){
+  const cont = document.getElementById("booksContainer");
+  document.getElementById("booksTitle").textContent = title;
+  document.getElementById("booksSubtitle").textContent = subtitle;
+
+  if(!books || books.length===0){
+    cont.innerHTML = `
+      <div style="padding:18px;color:var(--muted);text-align:center;">
+        Nema knjiga.
+      </div>`;
+    return;
+  }
+
+  cont.innerHTML = `
+    <div class="books-grid">
+      ${books.map(b=>{
+        const img = "/slike/" + encodeURIComponent(b.name) + ".png";
+        const owned = b.owned || b._owned;
+        const free = (b.price_silver|0) === 0;
+
         return `
-          <article class="book-card" data-id="${b.id}">
-            ${owned ? `<span class="badge-owned">Kupljeno</span>` : ``}
-            <div class="book-img">PDF</div>
-            <div class="book-body">
-              <div>
-                <div class="book-title">${b.name}</div>
-                <div class="book-author">${b.author ? ("Autor: " + b.author) : ""}</div>
-              </div>
-              <div>
-                <div class="book-meta">
-                  <span>${gradeLabel}</span>
-                  <span class="price-tag ${isFree?"price-free":""}">${priceText}</span>
-                </div>
-                <div class="book-actions">
-                  ${owned
-                    ? `<button class="btn-outline btn-small" data-act="open">Otvori</button>`
-                    : `<button class="btn-small btn" data-act="buy">Kupi</button>`
-                  }
-                  ${owned
-                    ? `<button class="btn-outline btn-small" data-act="open">PDF</button>`
-                    : ``
-                  }
-                </div>
-              </div>
+        <article class="book-card" data-id="${b.id}">
+          ${owned ? `<span class="badge-owned">Kupljeno</span>` : ``}
+
+          <div class="book-img"
+               style="background-image:url('${img}');"
+               onerror="this.style.background='linear-gradient(135deg,#22c55e,#16a34a)'">
+          </div>
+
+          <div style="flex:1;">
+            <div class="book-title">${b.name}</div>
+            <div class="book-author">${b.author || ""}</div>
+
+            <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;">
+              <span>Razred: ${b.grade}</span>
+              <span class="price-tag ${free?'price-free':''}">${formatPrice(b.price_silver)}</span>
             </div>
-          </article>
-        `;
-      }).join("");
 
-      cont.innerHTML = `<div class="books-grid">${html}</div>`;
+            <div class="book-actions">
+              ${owned
+                ? `<button class="btn-outline btn-small" data-act="open">Otvori</button>`
+                : `<button class="btn btn-small" data-act="buy">Kupi</button>`
+              }
+            </div>
+          </div>
+        </article>`;
+      }).join("")}
+    </div>
+  `;
 
-      cont.querySelectorAll(".book-card").forEach(card=>{
-        card.addEventListener("click",async (e)=>{
-          const act = e.target.closest("[data-act]")?.dataset.act;
-          if(!act) return;
-          const id = parseInt(card.dataset.id,10);
-          if(!id) return;
+  cont.querySelectorAll(".book-card").forEach(card=>{
+    card.addEventListener("click", async e=>{
+      const act = e.target.closest("[data-act]")?.dataset.act;
+      const id = parseInt(card.dataset.id);
+      if(!id) return;
 
-          if(act==="buy"){
-            await handleBuyBook(id);
-          }else if(act==="open"){
-            await handleOpenBook(id);
-          }
-        });
-      });
-    }
-
-    async function handleBuyBook(bookId){
-      if(!state.user){
-        alert("Prvo se prijavi.");
-        return;
-      }
-      try{
-        const res = await fetch("/api/books/buy",{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({ book_id: bookId })
-        });
-        const data = await res.json();
-        if(!res.ok || !data.ok){
-          alert(data.error || "Neuspjela kupovina.");
-          return;
-        }
-        if(typeof data.balance_silver === "number"){
-          state.user.balance_silver = data.balance_silver;
-        }
-        // nakon kupovine ponovno učitaj trenutni prikaz
-        renderUserBox();
-        if(state.showingMyBooks){
-          loadMyBooks();
-        }else if(state.currentGrade){
-          loadBooksForGrade(state.currentGrade);
-        }
-      }catch(e){
-        alert("Greška pri kupovini.");
-      }
-    }
-
-    async function handleOpenBook(bookId){
-      if(!state.user){
-        alert("Prvo se prijavi.");
-        return;
-      }
-      try{
-        const res = await fetch(`/api/books/open/${bookId}`);
-        const data = await res.json();
-        if(!res.ok || !data.ok){
-          alert(data.error || "Ne mogu otvoriti knjigu.");
-          return;
-        }
-        if(data.pdf){
-          window.open(data.pdf,"_blank");
-        }
-      }catch(e){
-        alert("Greška pri otvaranju knjige.");
-      }
-    }
-
-    async function loadBooksForGrade(grade){
-      state.showingMyBooks = false;
-      state.currentGrade = grade;
-      setActiveGradeButton(grade);
-      const status = document.getElementById("gradeStatus");
-      status.textContent = "Učitavam knjige za razred " + grade + "...";
-      try{
-        const res = await fetch(`/api/books/${encodeURIComponent(grade)}`);
-        const data = await res.json();
-        if(!res.ok || !data.ok){
-          status.textContent = data.error || "Greška pri učitavanju.";
-          renderBooksList("Knjige", "Greška pri učitavanju.", []);
-          return;
-        }
-        status.textContent = `Prikazane knjige za razred ${grade}.`;
-        renderBooksList(
-          "Knjige za razred " + grade,
-          "Odaberi knjigu i klikni „Kupi” ili „Otvori”.",
-          data.books || []
-        );
-      }catch(e){
-        status.textContent = "Greška pri učitavanju.";
-        renderBooksList("Knjige", "Greška pri učitavanju.", []);
-      }
-    }
-
-    async function loadMyBooks(){
-      state.showingMyBooks = true;
-      state.currentGrade = null;
-      setActiveGradeButton(null);
-      const status = document.getElementById("gradeStatus");
-      status.textContent = "Prikazane su tvoje knjige.";
-      try{
-        const res = await fetch("/api/my/books");
-        const data = await res.json();
-        if(!res.ok || !data.ok){
-          renderBooksList("Moje knjige","Greška pri učitavanju.",[]);
-          return;
-        }
-        // označi sve kao owned za UI
-        const list = (data.books||[]).map(b=>({ ...b, _owned:true }));
-        renderBooksList("Moje knjige","Sve knjige koje imaš kupljene.", list);
-      }catch(e){
-        renderBooksList("Moje knjige","Greška pri učitavanju.",[]);
-      }
-    }
-
-    // Auth tabs
-    document.querySelectorAll(".tab-btn").forEach(btn=>{
-      btn.addEventListener("click",()=>{
-        document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
-        const tab = btn.dataset.tab;
-        document.getElementById("loginForm").style.display = tab==="login"?"block":"none";
-        document.getElementById("registerForm").style.display = tab==="register"?"block":"none";
-      });
+      if(act==="buy") buyBook(id);
+      else if(act==="open") openBook(id);
     });
+  });
+}
 
-    // Login
-    document.getElementById("loginForm").addEventListener("submit",async (e)=>{
-      e.preventDefault();
-      const email = document.getElementById("loginEmail").value.trim();
-      const pass  = document.getElementById("loginPass").value;
-      const out   = document.getElementById("loginError");
-      out.textContent = "";
-      try{
-        const res = await fetch("/api/login",{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({ email, password:pass })
-        });
-        const data = await res.json();
-        if(!res.ok || !data.ok){
-          out.textContent = data.error || "Prijava nije uspjela.";
-          return;
-        }
-        // ponovno pozovi /api/me da uzme saldo itd.
-        await fetchMe();
-      }catch(err){
-        out.textContent = "Greška na serveru.";
-      }
-    });
+/* KUPI KNJIGU */
+async function buyBook(id){
+  if(!state.user){ alert("Prvo se prijavi."); return; }
 
-    // Register
-    document.getElementById("registerForm").addEventListener("submit",async (e)=>{
-      e.preventDefault();
-      const email = document.getElementById("regEmail").value.trim();
-      const pass  = document.getElementById("regPass").value;
-      const out   = document.getElementById("regError");
-      out.textContent = "";
-      try{
-        const res = await fetch("/api/register",{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({ email, password:pass })
-        });
-        const data = await res.json();
-        if(!res.ok || !data.ok){
-          out.textContent = data.error || "Registracija nije uspjela.";
-          return;
-        }
-        out.textContent = "Račun kreiran. Sada se možeš prijaviti.";
-        // prebaci na tab za login
-        document.querySelector('[data-tab="login"]').click();
-        document.getElementById("loginEmail").value = email;
-      }catch(err){
-        out.textContent = "Greška na serveru.";
-      }
-    });
+  const res = await fetch("/api/books/buy",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({book_id:id})
+  });
+  const data = await res.json();
 
-    // Grade buttons
-    document.getElementById("gradeButtons").addEventListener("click",(e)=>{
-      const btn = e.target.closest(".grade-btn");
-      if(!btn) return;
-      if(!state.user){
-        alert("Prvo se prijavi.");
-        return;
-      }
-      const grade = btn.dataset.grade;
-      loadBooksForGrade(grade);
-    });
+  if(!data.ok){ alert(data.error); return; }
 
-    // My books
-    document.getElementById("btnMyBooks").addEventListener("click",()=>{
-      if(!state.user){
-        alert("Prvo se prijavi.");
-        return;
-      }
-      loadMyBooks();
-    });
+  state.user.balance_silver = data.balance_silver;
+  renderUserBox();
 
-    async function fetchMe(){
-      try{
-        const res = await fetch("/api/me");
-        const data = await res.json();
-        if(!res.ok || !data.ok){
-          state.user = null;
-        }else{
-          state.user = data.user;
-        }
-      }catch{
-        state.user = null;
-      }
-      syncAuthUI();
-      renderUserBox();
-    }
+  if(state.showingMyBooks) loadMyBooks();
+  else loadBooks(state.currentGrade);
+}
 
-    // Init
-    (async function init(){
-      await fetchMe();
-    })();
-  </script>
+/* OTVORI */
+async function openBook(id){
+  const res = await fetch("/api/books/open/"+id);
+  const data = await res.json();
+  if(!data.ok){ alert(data.error); return; }
+  window.open(data.pdf, "_blank");
+}
+
+/* LOADING */
+async function loadBooks(grade){
+  state.currentGrade = grade;
+  state.showingMyBooks = false;
+
+  const res = await fetch("/api/books/"+grade);
+  const data = await res.json();
+  renderBooksList("Knjige za razred "+grade,"",data.books||[]);
+}
+
+async function loadMyBooks(){
+  state.showingMyBooks = true;
+
+  const res = await fetch("/api/my/books");
+  const data = await res.json();
+
+  const list = (data.books||[]).map(b=>({...b,_owned:true}));
+  renderBooksList("Moje knjige","Kupljene knjige",list);
+}
+
+/* AUTH + INIT */
+document.querySelector("[data-tab='login']").onclick = ()=>{
+  loginForm.style.display="block";
+  registerForm.style.display="none";
+};
+document.querySelector("[data-tab='register']").onclick = ()=>{
+  loginForm.style.display="none";
+  registerForm.style.display="block";
+};
+
+loginForm.onsubmit = async e=>{
+  e.preventDefault();
+  const res = await fetch("/api/login",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({email:loginEmail.value,password:loginPass.value})
+  });
+  const data = await res.json();
+  if(!data.ok){ loginError.textContent=data.error; return; }
+  location.reload();
+};
+
+registerForm.onsubmit = async e=>{
+  e.preventDefault();
+  const res = await fetch("/api/register",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({email:regEmail.value,password:regPass.value})
+  });
+  const data = await res.json();
+  if(!data.ok){ regError.textContent=data.error; return; }
+  alert("Račun kreiran. Sada se prijavi.");
+  location.reload();
+};
+
+/* INIT */
+(async ()=>{
+  const me = await fetch("/api/me").then(r=>r.json()).catch(()=>null);
+  if(me && me.ok) state.user = me.user;
+
+  renderUserBox();
+
+  if(state.user){
+    document.getElementById("authCard").style.display="none";
+    document.getElementById("gradesCard").style.display="block";
+  }
+})();
+
+</script>
+
 </body>
 </html>
