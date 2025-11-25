@@ -490,3 +490,41 @@ tr:hover td{
   }
 }
 
+/* ===== MOBITEL FIXES ===== */
+
+html, body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-height: 100vh;
+}
+
+.wrap {
+  max-width: 100%;
+  width: 100%;
+  padding: 12px;
+}
+
+/* sidebar da se može skrolati */
+.sidebar {
+  max-height: calc(100vh - 70px);
+  overflow-y: auto;
+}
+
+/* main knjige i detalji */
+.books-layout,
+.auth-layout {
+  min-height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+.books-grid {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+/* još uži telefoni */
+@media(max-width:500px){
+  .books-grid{
+    grid-template-columns:repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
