@@ -116,8 +116,8 @@ tr:nth-child(even) td{background:#1e293b;}
   </div>
 
   <div class="field">
-    <label>Slika (putanja) *</label>
-    <input id="bookImage" placeholder="/images/books/slika1.jpg">
+    <label>Slika (SAMO ime, npr: knjiga1.jpg) *</label>
+    <input id="bookImage" placeholder="knjiga1.jpg">
   </div>
 
   <div class="field">
@@ -129,11 +129,13 @@ tr:nth-child(even) td{background:#1e293b;}
       <option value="5">5</option><option value="6">6</option>
       <option value="7">7</option><option value="8">8</option>
       <option value="9">9</option>
+
       <option value="1s">1. srednja</option>
       <option value="2s">2. srednja</option>
       <option value="3s">3. srednja</option>
       <option value="4s">4. srednja</option>
-      <option value="ostalo">ostalo</option>
+
+      <option value="knjige">knjige</option>
     </select>
   </div>
 
@@ -202,38 +204,35 @@ function logout(){ fetch("/api/logout").then(()=>location.reload()); }
 
 /* CLEAR FORM */
 function clearForm(){
-  document.getElementById("bookId").value="";
-  document.getElementById("bookName").value="";
-  document.getElementById("bookAuthor").value="";
-  document.getElementById("bookImage").value="";
-  document.getElementById("bookGrade").value="";
-  document.getElementById("bookPrice").value="0";
-  document.getElementById("bookPdf").value="";
-  document.getElementById("formStatus").textContent="";
+  bookId.value="";
+  bookName.value="";
+  bookAuthor.value="";
+  bookImage.value="";
+  bookGrade.value="";
+  bookPrice.value="0";
+  bookPdf.value="";
+  formStatus.textContent="";
 }
 
 /* LOAD BOOKS */
 async function loadBooks(){
-  const status=document.getElementById("listStatus");
-  const list=document.getElementById("booksList");
-  status.textContent="Učitavam...";
+  listStatus.textContent="Učitavam...";
   try{
     const r=await fetch("/api/admin/books");
     const d=await r.json();
-    if(!d.ok){ status.textContent=d.error; return; }
+    if(!d.ok){ listStatus.textContent=d.error; return; }
     books=d.books;
-    status.textContent="Učitano: "+books.length;
+    listStatus.textContent="Učitano: "+books.length;
     renderTable();
   }catch{
-    status.textContent="Greška.";
+    listStatus.textContent="Greška.";
   }
 }
 
 /* RENDER TABLE */
 function renderTable(){
-  const list=document.getElementById("booksList");
   if(books.length===0){
-    list.innerHTML="Nema knjiga.";
+    booksList.innerHTML="Nema knjiga.";
     return;
   }
   let html=`
@@ -257,7 +256,7 @@ function renderTable(){
         <td>${b.id}</td>
         <td>${b.name}</td>
         <td>${b.author}</td>
-        <td>${b.image_path}</td>
+        <td>${b.cover_image}</td>
         <td>${b.grade}</td>
         <td>${b.price_silver}</td>
         <td>${b.pdf_path}</td>
@@ -268,37 +267,46 @@ function renderTable(){
       </tr>`;
   });
   html+=`</tbody></table>`;
-  list.innerHTML=html;
+  booksList.innerHTML=html;
 }
 
 /* FILL FORM */
 function editBook(id){
   const b=books.find(x=>x.id===id);
   if(!b) return;
-  document.getElementById("bookId").value=b.id;
-  document.getElementById("bookName").value=b.name;
-  document.getElementById("bookAuthor").value=b.author;
-  document.getElementById("bookImage").value=b.image_path;
-  document.getElementById("bookGrade").value=b.grade;
-  document.getElementById("bookPrice").value=b.price_silver;
-  document.getElementById("bookPdf").value=b.pdf_path;
+
+  bookId.value=b.id;
+  bookName.value=b.name;
+  bookAuthor.value=b.author;
+
+  // prikaži samo ime slike
+  bookImage.value=b.cover_image.replace("/slike/","");
+
+  bookGrade.value=b.grade;
+  bookPrice.value=b.price_silver;
+  bookPdf.value=b.pdf_path;
 }
 
 /* SAVE BOOK */
 async function saveBook(){
-  const status=document.getElementById("formStatus");
+  formStatus.textContent="";
+
+  const filename = bookImage.value.trim();
+
   const payload={
-    id: document.getElementById("bookId").value || null,
-    name: document.getElementById("bookName").value.trim(),
-    author: document.getElementById("bookAuthor").value.trim(),
-    image_path: document.getElementById("bookImage").value.trim(),
-    grade: document.getElementById("bookGrade").value.trim(),
-    price_silver: Number(document.getElementById("bookPrice").value),
-    pdf_path: document.getElementById("bookPdf").value.trim()
+    id: bookId.value || null,
+    name: bookName.value.trim(),
+    author: bookAuthor.value.trim(),
+    cover_image: "/slike/" + filename,
+    grade: bookGrade.value.trim(),
+    price_silver: Number(bookPrice.value),
+    pdf_path: bookPdf.value.trim()
   };
 
-  if(!payload.name || !payload.author || !payload.image_path || !payload.grade || !payload.pdf_path){
-    status.textContent="Popuni sva polja.";status.className="status err";return;
+  if(!payload.name || !payload.author || !filename || !payload.grade || !payload.pdf_path){
+    formStatus.textContent="Popuni sva polja.";
+    formStatus.className="status err";
+    return;
   }
 
   const r=await fetch("/api/admin/books/save",{
@@ -309,43 +317,58 @@ async function saveBook(){
   const d=await r.json();
 
   if(!d.ok){
-    status.textContent=d.error || "Greška.";status.className="status err";return;
+    formStatus.textContent=d.error || "Greška.";
+    formStatus.className="status err";
+    return;
   }
 
-  status.textContent="Spremljeno!";status.className="status ok";
+  formStatus.textContent="Spremljeno!";
+  formStatus.className="status ok";
+
   await loadBooks();
   if(!payload.id) clearForm();
 }
 
 /* DELETE BOOK */
 async function deleteBook(id){
-  const status=document.getElementById("listStatus");
   const r=await fetch("/api/admin/books/delete",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({id})
   });
   const d=await r.json();
-  if(!d.ok){ status.textContent=d.error;status.className="status err";return; }
-  status.textContent="Knjiga obrisana.";status.className="status ok";
-  await loadBooks();
+  if(!d.ok){
+    listStatus.textContent=d.error;
+    listStatus.className="status err";
+    return;
+  }
+  listStatus.textContent="Knjiga obrisana.";
+  listStatus.className="status ok";
+  loadBooks();
 }
 
 /* ADD GOLD */
 async function addGold(){
-  const email=document.getElementById("goldEmail").value.trim();
-  const amount=document.getElementById("goldAmount").value.trim();
-  const status=document.getElementById("goldStatus");
+  goldStatus.textContent="";
+
+  const email = goldEmail.value.trim();
+  const amount = Number(goldAmount.value.trim());
 
   const r=await fetch("/api/admin/add-gold",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({email,amount})
+    body:JSON.stringify({ email, gold:amount })  // ispravljeno
   });
   const d=await r.json();
-  if(!d.ok){ status.textContent=d.error;status.className="status err";return; }
 
-  status.textContent="Gold dodan!";status.className="status ok";
+  if(!d.ok){
+    goldStatus.textContent=d.error;
+    goldStatus.className="status err";
+    return;
+  }
+
+  goldStatus.textContent="Gold dodan!";
+  goldStatus.className="status ok";
 }
 
 loadUser();
